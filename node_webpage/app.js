@@ -44,34 +44,10 @@ app.get('/', async function (req, res) {
     res.sendFile(__dirname + '/public/login.html');
 });
 
-app.get('/login', async function (req, res) {
+app.get('/dashboard', async function (req, res) {
 
-    //try {
-        
-        // Define our queries
-        //const query1 = 'DROP TABLE IF EXISTS diagnostic;';
-        //const query2 = 'CREATE TABLE diagnostic(id INT PRIMARY KEY AUTO_INCREMENT, text VARCHAR(255) NOT NULL);';
-        //const query3 = 'INSERT INTO diagnostic (text) VALUES ("MySQL and Node is working for myONID!");'; // Replace with your ONID
-        //const query4 = 'SELECT * FROM diagnostic;';
-        
-        // Execute each query synchronously (await).
-        // We want each query to finish before the next one starts.
-        //await db.query(query1);
-        //await db.query(query2);
-        //await db.query(query3);
-        //const [rows] = await db.query(query4); // Store the results
-        
-        // Send the results to the browser
-        //const base = "<h1>MySQL Results:</h1>";
-        //res.send(base + JSON.stringify(rows));
-
-    //} catch (error) {
-        //console.error("Error executing queries:", error);
-
-        // Send a generic error message to the browser
-        //res.status(500).send("An error occurred while executing the database queries.");
-    //}
-    res.sendFile(__dirname + '/public/login.html');
+    
+    res.sendFile(__dirname + '/public/index.html');
 });
 
 /*
