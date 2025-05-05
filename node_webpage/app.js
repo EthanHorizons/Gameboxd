@@ -48,7 +48,7 @@ app.get('/', async function (req, res) {
     res.sendFile(__dirname + '/public/login.html');
 });
 
-app.get('/dashboard', async function (req, res) {
+app.get('/index', async function (req, res) {
 
     
     res.sendFile(__dirname + '/public/index.html');
