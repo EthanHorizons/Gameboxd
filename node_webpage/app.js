@@ -5,6 +5,8 @@
 // Express
 const express = require('express');  // We are using the express library for the web server
 const app = express();               // We need to instantiate an express object to interact with the server in our code
+const path = require('path');
+
 const PORT = 53005;     // Set a port number
 
 // Database 
