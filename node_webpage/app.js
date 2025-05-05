@@ -5,6 +5,8 @@
 // Express
 const express = require('express');  // We are using the express library for the web server
 const app = express();               // We need to instantiate an express object to interact with the server in our code
+const path = require('path');
+
 const PORT = 53005;     // Set a port number
 
 // Database 
@@ -13,6 +15,8 @@ const db = require('./db-connector');
 /*
     ROUTES
 */
+app.use('/css', express.static(path.join(__dirname, 'css')));
+app.use('/js', express.static(path.join(__dirname, 'js')));
 
 app.get('/', async function (req, res) {
 
