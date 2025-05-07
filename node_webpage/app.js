@@ -4,20 +4,45 @@
 
 // Express
 const express = require('express');  // We are using the express library for the web server
-const app = express();               // We need to instantiate an express object to interact with the server in our code
+const exphbs = require('express-handlebars'); // We are using the express-handlebars library for the templating engine
 const path = require('path');
+
+const app = express();               // We need to instantiate an express object to interact with the server in our code
+
 
 const PORT = 53005;     // Set a port number
 
 // Database 
 const db = require('./db-connector');
 app.use(express.json());
+app.use(express.static('public'));
+
+app.engine('hbs', exphbs.engine({
+    extname: 'hbs',
+    defaultLayout: 'main',
+    layoutsDir: path.join(__dirname, 'views', 'layouts')
+  }));
+app.set('view engine', 'hbs'); // Set the view engine to hbs (Handlebars)
+app.set('views', path.join(__dirname, 'views'));
 
 /*
     ROUTES
 */
 
-app.post('/', async function (req, res) {
+app.get('/', async function (req, res) {
+
+    res.render('index', {title: 'Home'}); // This is the home page
+});
+//pages for each entity
+app.get('/games', async function (req, res) {
+    res.render('games', {title: 'Games'});
+}); // This is the games page
+app.get('/users', async function (req, res) {
+    res.render('users', {title: 'Games'});
+}); // This is the users page
+
+
+app.post('/insert', async function (req, res) {
 try {
     const { userID, gameID } = req.body;
     
@@ -35,6 +60,7 @@ try {
     res.status(500).send('Error adding game to library');
 }
 }); 
+
 
 /*
 For filtering:

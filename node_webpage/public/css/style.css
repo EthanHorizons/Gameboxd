@@ -1,0 +1,70 @@
+/* Reset */
+.navbar {
+  background: linear-gradient(135deg, var(--prime-color), var(--secondary-color)); 
+  font-size: 1.8em;
+  font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  padding: 12px 20px;
+  margin: 10px auto;
+  height: fit-content;
+  border-radius: 12px;
+  width: 90vw;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  transition: transform 0.3s ease;
+}
+
+  .navbar:hover {
+      transform: translateY(-2px);
+  }
+
+  .navbar a {
+      text-decoration: none;
+      color: var(--text-color);
+      transition: color 0.3s ease;
+  }
+
+      .navbar a:hover {
+          color: var(--highlight);
+      }
+
+.navbar-brand {
+  font-size: 1.5em;
+  font-weight: 700;
+  padding-right: 20px;
+  padding-left: 10px;
+}
+
+.navbar-item {
+  font-variant: small-caps;
+  padding-right: 20px;
+  font-size: 0.9em;
+  letter-spacing: 0.05em;
+}
+
+  .navbar-item:last-child {
+      padding-right: 0;
+  }
+/* Table Styles */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+    background-color: white;
+  }
+
+  th, td {
+    border: 1px solid #ccc;
+    padding: 12px;
+    text-align: left;
+  }
+
+  th {
+    background-color: #333;
+    color: white;
+  }
+
+  tr:nth-child(even) {
+    background-color: #f9f9f9;
+  }

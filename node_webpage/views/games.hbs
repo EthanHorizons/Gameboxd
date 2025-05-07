@@ -1,0 +1,160 @@
+<h1>Games</h1>
+
+<table>
+  <thead>
+    <tr>
+      <th>ID</th>
+      <th>Name</th>
+      <th>Genre ID</th>
+      <th>Platform ID</th>
+      <th>Users</th>
+      <th>Rating</th>
+      <th>Description</th>
+      <th>Actions</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>1</td>
+      <td>The Witcher 3</td>
+      <td>1</td>
+      <td>1</td>
+      <td>1000</td>
+      <td>10</td>
+      <td>An open-world RPG set in a fantasy universe.</td>
+      <td>
+        <form>
+            <button>Delete</button>
+        </form>
+      </td>
+    </tr>
+    <tr>
+      <td>2</td>
+      <td>Halo Infinite</td>
+      <td>2</td>
+      <td>2</td>
+      <td>5000</td>
+      <td>9</td>
+      <td>A first-person shooter game set in a sci-fi universe.</td>
+      <td>
+        <form>
+            <button>Delete</button>
+        </form>
+      </td>
+    </tr>
+    <tr>
+      <td>3</td>
+      <td>God of War</td>
+      <td>3</td>
+      <td>3</td>
+      <td>3000</td>
+      <td>10</td>
+      <td>An action-adventure game based on Norse mythology.</td>
+      <td>
+        <form>
+            <button>Delete</button>
+        </form>
+      </td>
+    </tr>
+    <tr>
+      <td>4</td>
+      <td>Zelda: Breath of the Wild</td>
+      <td>4</td>
+      <td>4</td>
+      <td>2000</td>
+      <td>10</td>
+      <td>An open-world action-adventure game set in Hyrule.</td>
+      <td>
+        <form>
+            <button>Delete</button>
+        </form>
+      </td>
+    </tr>
+    <tr>
+      <td>5</td>
+      <td>Candy Crush Saga</td>
+      <td>5</td>
+      <td>5</td>
+      <td>15000</td>
+      <td>8</td>
+      <td>A match-three puzzle game with colorful candies.</td>
+      <td>
+        <form>
+            <button>Delete</button>
+        </form>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<h1>Add Game</h1>
+<form action="/create" method="POST">
+  <label for="name">Game Name</label>
+  <input type="text" id="name" name="name" required>
+
+  <label for="genreID">Genre ID</label>
+  <select id="genreID" name="genreID" required>
+    <option value="">Select Genre</option>
+    <option value="1">RPG</option>
+    <option value="2">Shooter</option>
+    <option value="3">Action</option>
+    <option value="4">Adventure</option>
+    <option value="5">Puzzle</option>
+  </select>
+
+  <label for="platformID">Platform ID</label>
+  <select id="platformID" name="platformID" required>
+    <option value="">Select Platform</option>
+    <option value="1">PC</option>
+    <option value="2">Xbox</option>
+    <option value="3">PlayStation</option>
+    <option value="4">Nintendo</option>
+    <option value="5">Mobile</option>
+  </select>
+
+  <label for="numUsers">Number of Users</label>
+  <input type="number" id="numUsers" name="numUsers" min="0" required>
+
+  <label for="rating">Rating (1–10)</label>
+  <input type="number" id="rating" name="rating" min="1" max="10" required>
+
+  <label for="description">Description</label>
+  <input id="description" name="description" required></input>
+
+  <button type="submit">Add Game</button>
+</form>
+
+<h1>Update Game</h1>
+<form action="PLACEHLDER" method="POST">
+  <label for="name">Game Name</label>
+  <input type="text" id="name" name="name" value="..." required>
+
+  <label for="genreID">Genre ID</label>
+  <select id="genreID" name="genreID" required>
+    <option value="1">RPG</option>
+    <option value="2">Shooter</option>
+    <option value="3" >Action</option>
+    <option value="4">Adventure</option>
+    <option value="5">Puzzle</option>
+  </select>
+
+  <label for="platformID">Platform ID</label>
+  <select id="platformID" name="platformID" required>
+    <option value="1">PC</option>
+    <option value="2">Xbox</option>
+    <option value="3" >PlayStation</option>
+    <option value="4">Nintendo</option>
+    <option value="5">Mobile</option>
+  </select>
+
+  <label for="numUsers">Number of Users</label>
+  <input type="number" id="numUsers" name="numUsers" value="0" required>
+
+  <label for="rating">Rating</label>
+  <input type="number" id="rating" name="rating" value="10" min="1" max="10" required>
+
+  <label for="description">Description</label>
+  <input id="description" name="description" rows="4" required>An action-adventure game based on Norse mythology.</input>
+
+  <button type="submit">Update Game</button>
+</form>
