@@ -1,4 +1,12 @@
 /* Reset */
+
+:root {
+  --prime-color: #490000;
+    --secondary-color: #491f1f;
+    --back-color: #250053;
+    --text-color: #fee2e6;
+    --highlight: #767676;
+}
 .navbar {
   background: linear-gradient(135deg, var(--prime-color), var(--secondary-color)); 
   font-size: 1.8em;
@@ -51,10 +59,11 @@
     width: 100%;
     border-collapse: collapse;
     margin-top: 20px;
-    background-color: white;
+    background-color: var(--secondary-color);
   }
 
   th, td {
+    color: var(--text-color);
     border: 1px solid #ccc;
     padding: 12px;
     text-align: left;
@@ -62,9 +71,63 @@
 
   th {
     background-color: #333;
-    color: white;
+    color: var(--text-color);
   }
+  /*------------------------BODY------------------------*/
+  .description {
+    text-align: center;
+    padding-bottom: 50px;
+    background: linear-gradient(135deg, var(--prime-color), var(--secondary-color));
+    font-size: 1.8em;
+    font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    color: var(--text-color);
+    padding: 12px 20px;
+    border-radius: 6px;
+}
+.body-content {
+    padding: 5px;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    width: 80vw;
+}
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+  
+    font-family: 'OCR A', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+}
+.content-back {
+    background: linear-gradient(to bottom, #000000, #360101);
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    height: 100vw;
+    display: flex;
+    justify-content: space-between;
+    overflow: clip;
+    flex-direction: column;
+    align-items: center;
+}
 
-  tr:nth-child(even) {
-    background-color: #f9f9f9;
-  }
+.footer{
+    
+    font-family: 'Courier New', Courier, monospace;
+    width: 90vw;
+    color: var(--text-color)
+}
+h1 {
+    font-size: 2.5em;
+    color: var(--text-color);
+    text-align: center;
+    margin: 20px 0;
+    font-family: 'exotcursive', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+label {
+    font-size: 1.2em;
+    color: var(--text-color);
+    margin-bottom: 10px;
+    display: block;
+    font-family: 'exotcursive', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
