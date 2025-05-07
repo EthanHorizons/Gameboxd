@@ -1,16 +1,17 @@
 {
   "name": "gameboxd",
   "version": "1.0.0",
-  "main": "index.js",
+  "main": "app.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "development": "npx nodemon app.js",
     "production": "npx forever start app.js",
-    "stop_production": "npx forever stop app.js"
+    "stop_production": "npx forever stop app.js",
+    "prod": "npx pm2 start app.js --name gameboxd",
+    "stop": "npx pm2 stop gameboxd"
   },
   "author": "",
   "license": "ISC",
-  "description": "",
   "dependencies": {
     "express": "^5.1.0",
     "express-handlebars": "^8.0.1",
@@ -18,5 +19,9 @@
     "mysql2": "^3.14.1",
     "node": "^22.15.0",
     "nodemon": "^3.1.10"
-  }
+  },
+  "devDependencies": {
+    "pm2": "^6.0.5"
+  },
+  "description": ""
 }

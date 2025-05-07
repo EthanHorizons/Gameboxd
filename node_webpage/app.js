@@ -1,6 +1,12 @@
 /*
     SETUP
 */
+//uses pm2 to run the server
+// pm2 start app.js --name "gameboxd" --watch
+// TO START:    npm run prod
+// TO STOP:     npm run stop
+
+
 
 // Express
 const express = require('express');  // We are using the express library for the web server
