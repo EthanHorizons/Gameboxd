@@ -46,7 +46,9 @@ app.get('/genres', async function (req, res) {
 app.get('/platforms', async function (req, res) {
     res.render('platforms', {title: 'Platfforms'});
 }); // This is the platform page
-
+app.get('/userLibrary', async function (req, res) {
+    res.render('userLibrary', {title: 'User Library'});
+}); // This is the page for user libraries
 
 app.post('/insert', async function (req, res) {
 try {
