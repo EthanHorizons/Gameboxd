@@ -38,8 +38,14 @@ app.get('/games', async function (req, res) {
     res.render('games', {title: 'Games'});
 }); // This is the games page
 app.get('/users', async function (req, res) {
-    res.render('users', {title: 'Games'});
+    res.render('users', {title: 'Users'});
 }); // This is the users page
+app.get('/genres', async function (req, res) {
+    res.render('genres', {title: 'Genres'});
+}); // This is the genres page
+app.get('/platforms', async function (req, res) {
+    res.render('platforms', {title: 'Platfforms'});
+}); // This is the platform page
 
 
 app.post('/insert', async function (req, res) {
