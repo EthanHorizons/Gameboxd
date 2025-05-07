@@ -70,76 +70,94 @@ try {
 }); 
 
 
-/*
-For filtering:
 
-
-filterString:
-    NULL- filter does not exist
-    genres.name - filter for genre
-    platforms.name - filter for platform
-    games.numUsers- filter for numUsers
-    games.rating- filter for rating
-    anything else- throw an error
-
-filter:
-    the thing to be filtered through sliders/inputs
-    ex: filterString = genres.name, filter = 'rpg'
-*/
 
 /* Still to implement:
 .get('/games:id')
 .get('/userLibrary')
 */
 
+
+app.get('/games:id', async function (req, res) {
+    // will finish later today
+});
+
+/* 
+Description: returns the table of games with optional filter as well. can sort by genre, platform,
+greater than {filter} rating or numUsers. 
+
+Parameters: (Optional)
+    filterString:
+        NULL- filter does not exist, returns all games
+        genres.name - filter for genre
+        platforms.name - filter for platform
+        games.numUsers- filter for numUsers
+        games.rating- filter for rating
+        anything else- throw an error
+    filter:
+        if filterSting exists, cannot be NULL
+        the thing to be filtered through sliders/inputs
+        ex: filterString = genres.name, filter = 'rpg'
+*/
 app.get('/dasboard', async function (req, res) {
     try {
+        // filters as selected by user to sort the list of games
         const {filterString, filter} = req.body;
 
-        if (!filterString) {
+        // if no filter provided
+        if (!filterString || !filter) {
+            // returns a table of all games
             const query1 = `SELECT games.gameID, games.name AS name, genres.name AS genre, 
                                 platforms.name AS platform, games.numUsers, 
                                 games.rating, games.description '
-                        FROM games 
-                        INNER JOIN genres ON genres.genreID = games.genreID 
-                        INNER JOIN platforms ON platforms.platformID = games.platformID 
-                        ORDER BY games.name DESC`;
+                            FROM games 
+                            INNER JOIN genres ON genres.genreID = games.genreID 
+                            INNER JOIN platforms ON platforms.platformID = games.platformID 
+                            ORDER BY games.rating DESC`;
         } 
+        // if filter is sorting by genre or platform
+        else if (filterString == "genres.name" || filterString == "platforms.name") {
+            // returns table with just one genre or just one platform
+            const query1 = `SELECT games.gameID, games.name AS name, genres.name AS genre, 
+                                platforms.name AS platform, games.numUsers, 
+                                games.rating, games.description '
+                            FROM games 
+                            INNER JOIN genres ON genres.genreID = games.genreID 
+                            INNER JOIN platforms ON platforms.platformID = games.platformID 
+                            WHERE ${filterString} = ${filter}
+                            ORDER BY games.rating DESC`;
+        } 
+        // if filter is sorting by number of users or rating of game
+        else if (filterString == "games.numUsers" || filterString == "games.rating") {
+            // returns table with every game > {filter} rating or numUsers
+            const query1 = query1 = `SELECT games.gameID, games.name AS name, genres.name AS genre, 
+                                        platforms.name AS platform, games.numUsers, 
+                                        games.rating, games.description '
+                                    FROM games 
+                                    INNER JOIN genres ON genres.genreID = games.genreID 
+                                    INNER JOIN platforms ON platforms.platformID = games.platformID 
+                                    WHERE ${filterString} >= ${filter}
+                                    ORDER BY games.name DESC`;
+        } else {
+            throw new Error("Invalid filterString provided");
+        }
+
+        // sends query1 to fetch table
         const games = await db.query(query);
+
+        // if query unsucessful
         if (!games) {
             res.status(400).send("Error fetching games");
         }
+
+        // sends game table
         res.status(200).json(games);
 
     } catch (error) {
         console.error("Error fetching games", error);
         res.status(500).send("Error occured fetching games.");
     }
-    //try {
-        
-        // Define our queries
-        //const query1 = 'DROP TABLE IF EXISTS diagnostic;';
-        //const query2 = 'CREATE TABLE diagnostic(id INT PRIMARY KEY AUTO_INCREMENT, text VARCHAR(255) NOT NULL);';
-        //const query3 = 'INSERT INTO diagnostic (text) VALUES ("MySQL and Node is working for myONID!");'; // Replace with your ONID
-        //const query4 = 'SELECT * FROM diagnostic;';
-        
-        // Execute each query synchronously (await).
-        // We want each query to finish before the next one starts.
-        //await db.query(query1);
-        //await db.query(query2);
-        //await db.query(query3);
-        //const [rows] = await db.query(query4); // Store the results
-        
-        // Send the results to the browser
-        //const base = "<h1>MySQL Results:</h1>";
-        //res.send(base + JSON.stringify(rows));
-
-    //} catch (error) {
-        //console.error("Error executing queries:", error);
-
-        // Send a generic error message to the browser
-        //res.status(500).send("An error occurred while executing the database queries.");
-    //}
+    
 });
 
 /*
