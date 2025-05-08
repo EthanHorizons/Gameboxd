@@ -17,7 +17,7 @@ INSERT INTO `games` (`gameID`, `name`, `genreID`, `platformID`, `numUsers`, `rat
 (2, 'Halo Infinite', 2, 2, 5000, 9, 'A first-person shooter game set in a sci-fi universe.'),
 (3, 'God of War', 3, 3, 3000, 10, 'An action-adventure game based on Norse mythology.'),
 (4, 'Zelda: Breath of the Wild', 4, 4, 2000, 10, 'An open-world action-adventure game set in Hyrule.'),
-(5, 'Candy Crush Saga', 5, 5, 15000, 8, 'A match-three puzzle game with colorful candies.')
+(5, 'Candy Crush Saga', 5, 5, 15000, 8, 'A match-three puzzle game with colorful candies.'),
 (6, 'Minecraft', 1, 1, 12000, 9, 'A sandbox game that allows players to build and explore worlds.'),
 (7, 'Fortnite', 2, 5, 20000, 8, 'A battle royale game with building mechanics.'),
 (8, 'Overwatch', 3, 2, 8000, 9, 'A team-based multiplayer first-person shooter.'),
@@ -36,4 +36,8 @@ INSERT INTO `userLibrary` (`userID`, `gameID`) VALUES
 (4, 9),
 (5, 10);
 
- 
+INSERT INTO `genres`(`genreID`, `name`)
+VALUES 
+(1, 'horror'), (2, 'adventure'), (3, 'action'), (4, 'multiplayer'), (5, 'fps'), (6, 'rpg'),
+(7, 'singleplayer'), (8, 'rougelike'), (9, 'puzzle'), (10, 'turn-based'), (11, 'simulation'), 
+(12, 'sports'), (13, 'open-world'), (14, 'strategy');

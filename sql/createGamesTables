@@ -1,4 +1,9 @@
 -- SQL file to create all of our tables
+DROP TABLE IF EXISTS userLibrary;
+DROP TABLE IF EXISTS games;
+DROP TABLE IF EXISTS genres;
+DROP TABLE IF EXISTS platforms;
+DROP TABLE IF EXISTS users;
 
 CREATE TABLE users (
     userID int(11) NOT NULL AUTO_INCREMENT,

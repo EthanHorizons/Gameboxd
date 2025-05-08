@@ -2,6 +2,7 @@
     SETUP
 */
 
+
 // Express
 const express = require('express');  // We are using the express library for the web server
 const exphbs = require('express-handlebars'); // We are using the express-handlebars library for the templating engine
@@ -10,6 +11,13 @@ const path = require('path');
 const app = express();               // We need to instantiate an express object to interact with the server in our code
 
 
+// basic sql table used in multiple .get requests
+const basic_table = `SELECT games.gameID, games.name AS name, genres.name AS genre, 
+                        platforms.platform AS platform, games.numUsers, 
+                        games.rating, games.description 
+                    FROM games 
+                    INNER JOIN genres ON genres.genreID = games.genreID 
+                    INNER JOIN platforms ON platforms.platformID = games.platformID `;
 const PORT = 53005;     // Set a port number
 
 // Database 
@@ -71,13 +79,38 @@ try {
 
 
 /* Still to implement:
-.get('/games:id')
 .get('/userLibrary')
 */
+app.get('/userLibrary:userID', async function (req, res) {
+    const userID = req.params.id;
+    try {
+        if (!userID) {
+            throw new Error("No ID provided");
+        }
 
+        const library = await db.query(basic_table + 
+            ` INNER JOIN userLibrary ON userLibrary.gameID = games.gameID
+                INNER JOIN users ON users.userID = userLibrary.userID
+                WHERE users.userID = ${id};`);
+    res.status(200).json(library);
+    } catch (error) {
+        console.error("Get ")
+    }
+});
 
-app.get('/games:id', async function (req, res) {
-    // will finish later today
+app.get('/games/:id', async function (req, res) {
+    const id = req.params.id;
+    try {
+        if (!id) {
+            throw new Error("No ID provided");
+        }
+        const game = await db.query(basic_table + ` WHERE games.gameID = ${id};`);
+        
+        res.status(200).json(game);
+    } catch (error) {
+        console.error(`Error fetching game by id`, error);
+        res.status(500).send("Error occured fetching game by id.");
+    }
 });
 
 /* 
@@ -88,7 +121,7 @@ Parameters: (Optional)
     filterString:
         NULL- filter does not exist, returns all games
         genres.name - filter for genre
-        platforms.name - filter for platform
+        platforms.platform - filter for platform
         games.numUsers- filter for numUsers
         games.rating- filter for rating
         anything else- throw an error
@@ -101,41 +134,23 @@ app.get('/dasboard', async function (req, res) {
     try {
         // filters as selected by user to sort the list of games
         const {filterString, filter} = req.body;
-
+        query1 = basic_table;
         // if no filter provided
         if (!filterString || !filter) {
             // returns a table of all games
-            const query1 = `SELECT games.gameID, games.name AS name, genres.name AS genre, 
-                                platforms.name AS platform, games.numUsers, 
-                                games.rating, games.description '
-                            FROM games 
-                            INNER JOIN genres ON genres.genreID = games.genreID 
-                            INNER JOIN platforms ON platforms.platformID = games.platformID 
-                            ORDER BY games.rating DESC`;
+            query1 += ` ORDER BY games.rating DESC;`;
         } 
         // if filter is sorting by genre or platform
-        else if (filterString == "genres.name" || filterString == "platforms.name") {
+        else if (filterString == "genres.name" || filterString == "platforms.platform") {
             // returns table with just one genre or just one platform
-            const query1 = `SELECT games.gameID, games.name AS name, genres.name AS genre, 
-                                platforms.name AS platform, games.numUsers, 
-                                games.rating, games.description '
-                            FROM games 
-                            INNER JOIN genres ON genres.genreID = games.genreID 
-                            INNER JOIN platforms ON platforms.platformID = games.platformID 
-                            WHERE ${filterString} = ${filter}
-                            ORDER BY games.rating DESC`;
+            query1 += ` WHERE ${filterString} = ${filter}
+                        ORDER BY games.rating DESC;`;
         } 
         // if filter is sorting by number of users or rating of game
         else if (filterString == "games.numUsers" || filterString == "games.rating") {
             // returns table with every game > {filter} rating or numUsers
-            const query1 = query1 = `SELECT games.gameID, games.name AS name, genres.name AS genre, 
-                                        platforms.name AS platform, games.numUsers, 
-                                        games.rating, games.description '
-                                    FROM games 
-                                    INNER JOIN genres ON genres.genreID = games.genreID 
-                                    INNER JOIN platforms ON platforms.platformID = games.platformID 
-                                    WHERE ${filterString} >= ${filter}
-                                    ORDER BY games.name DESC`;
+            query1 += ` WHERE ${filterString} >= ${filter}
+                        ORDER BY games.name DESC;`;
         } else {
             throw new Error("Invalid filterString provided");
         }
@@ -157,6 +172,9 @@ app.get('/dasboard', async function (req, res) {
     }
     
 });
+
+
+
 
 /*
     LISTENER
