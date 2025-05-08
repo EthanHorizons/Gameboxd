@@ -58,66 +58,76 @@ app.get('/genres', async function (req, res) {
     res.render('genres', {title: 'Genres'});
 }); // This is the genres page
 app.get('/platforms', async function (req, res) {
-    res.render('platforms', {title: 'Platfforms'});
+    res.render('platforms', {title: 'Platforms'});
 }); // This is the platform page
 app.get('/userLibrary', async function (req, res) {
     res.render('userLibrary', {title: 'User Library'});
 }); // This is the page for user libraries
+
+
 
 app.post('/insert', async function (req, res) {
 try {
     const { userID, gameID } = req.body;
     
     if (!userID || !gameID) {
-        return res.status(400).send("user_id or game_id missing from req.body");
+        return res.status(400).send("userID or gameID missing from req.body");
     }
 
     const query = 'INSERT INTO userLibrary (userID, gameID) VALUES (' + userID + ', ' + gameID + ');';
 
     await db.query(query);
 
-    res.status(200).send("Game successfully added to userLibrary");
-} catch {
+    res.status(201).send("Game successfully added to library");
+} catch (error) {
     console.error("Error adding game to library", error);
-    res.status(500).send('Error adding game to library');
+    res.status(500).send();
 }
 }); 
 
 
 
 
-/* Still to implement:
-.get('/userLibrary')
-*/
-app.get('/userLibrary:userID', async function (req, res) {
-    const userID = req.params.id;
+
+
+app.get('/userLibrary/:userID', async function (req, res) {
+    const userID = req.params.userID;
     try {
         if (!userID) {
             throw new Error("No ID provided");
         }
 
+        // sends query for user library based off userID
         const library = await db.query(basic_table + 
             ` INNER JOIN userLibrary ON userLibrary.gameID = games.gameID
-                INNER JOIN users ON users.userID = userLibrary.userID
-                WHERE users.userID = ${id};`);
-    res.status(200).json(library);
+            INNER JOIN users ON users.userID = userLibrary.userID
+            WHERE users.userID = ${userID};`);
+    
+        res.status(200).json(library);
+
     } catch (error) {
-        console.error("Get ")
+        console.error("Error occured getting userLibary by userID", error);
+        res.status(500).send();
     }
 });
 
-app.get('/games/:id', async function (req, res) {
-    const id = req.params.id;
+// gets game based off of gameID
+app.get('/games/:gameID', async function (req, res) {
+    const gameID = req.params.gameID;
     try {
-        if (!id) {
+        if (!gameID) {
             throw new Error("No ID provided");
         }
-        const game = await db.query(basic_table + ` WHERE games.gameID = ${id};`);
+        const game = await db.query(basic_table + ` WHERE games.gameID = ${gameID};`);
         
+        if (!game || game.length === 0) {
+            res.status(404).useChunkedEncodingByDefault("Game not found.");
+        }
+
         res.status(200).json(game);
     } catch (error) {
-        console.error(`Error fetching game by id`, error);
-        res.status(500).send("Error occured fetching game by id.");
+        console.error(`Error fetching game by gameID`, error);
+        res.status(500).send();
     }
 });
 
@@ -138,11 +148,12 @@ Parameters: (Optional)
         the thing to be filtered through sliders/inputs
         ex: filterString = genres.name, filter = 'rpg'
 */
-app.get('/dasboard', async function (req, res) {
+app.get('/dashboard', async function (req, res) {
     try {
         // filters as selected by user to sort the list of games
-        const {filterString, filter} = req.body;
-        query1 = basic_table;
+        const {filterString, filter} = req.query;
+        let query1 = basic_table;
+
         // if no filter provided
         if (!filterString || !filter) {
             // returns a table of all games
@@ -164,21 +175,44 @@ app.get('/dasboard', async function (req, res) {
         }
 
         // sends query1 to fetch table
-        const games = await db.query(query);
+        const games = await db.query(query1);
 
         // if query unsucessful
-        if (!games) {
-            res.status(400).send("Error fetching games");
+        if (!games || games.length === 0) {
+            res.status(404).send("No games found");
         }
 
         // sends game table
         res.status(200).json(games);
 
     } catch (error) {
-        console.error("Error fetching games", error);
-        res.status(500).send("Error occured fetching games.");
+        console.error("Error fetching gamesin /dashboard", error);
+        res.status(500).send();
     }
     
+});
+
+app.delete('/userLibrary/:userID', async function (req, res) {
+    const { gameID } = req.body;
+    const userID = req.params.userID;
+
+    try {
+        if (!gameID || !userID) {
+            throw new Error("User or game ID does not exist");
+        } 
+
+        const query = await db.query(`DELETE FROM userLibrary 
+                        WHERE gameID = ${gameID} AND userID = ${userID};`);
+
+        if (query.affectedRows === 0) {
+            throw new Error(`Could not delete row \nuserID: ${userID} gameID: ${gameID}`);
+        }
+
+        res.status(204).send(query.affectedRows);
+    } catch (error) {
+        console.error("Could not remove game from userLibrary", error);
+        res.status(500).send();
+    }
 });
 
 
