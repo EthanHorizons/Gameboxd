@@ -1,3 +1,51 @@
+-- SQL file to create all of our tables
+DROP TABLE IF EXISTS userLibrary;
+DROP TABLE IF EXISTS games;
+DROP TABLE IF EXISTS genres;
+DROP TABLE IF EXISTS platforms;
+DROP TABLE IF EXISTS users;
+
+CREATE TABLE users (
+    userID int(11) NOT NULL AUTO_INCREMENT,
+    username varchar(255) NOT NULL,
+    email varchar(255) NOT NULL,
+    numGames int(11) NOT NULL,
+    PRIMARY KEY (userID)
+);
+
+CREATE TABLE platforms (
+    platformID int(11) NOT NULL AUTO_INCREMENT,
+    platform varchar(255) NOT NULL,
+    PRIMARY KEY (platformID)
+);
+
+CREATE TABLE genres (
+    genreID int(11) NOT NULL AUTO_INCREMENT,
+    name varchar(255),
+    PRIMARY KEY (genreID)
+);
+
+CREATE TABLE games (
+    gameID int(11) NOT NULL AUTO_INCREMENT,
+    name varchar(255) NOT NULL,
+    genreID int(11) NOT NULL,
+    platformID int(11) NOT NULL,
+    numUsers int (11),
+    rating int(11),
+    description varchar(255),
+    PRIMARY KEY (gameID),
+    FOREIGN KEY (genreID) REFERENCES genres(genreID),
+    FOREIGN KEY (platformID) REFERENCES platforms(platformID)
+);
+
+CREATE TABLE userLibrary (
+    userID int(11) NOT NULL,
+    gameID int(11) NOT NULL,
+    FOREIGN KEY (userID) REFERENCES users(userID),
+    FOREIGN KEY (gameID) REFERENCES games(gameID)
+);
+
+
 INSERT INTO `users` (`userID`,`username`, `email`, `numGames`) VALUES
 (1, 'John Doe', 'jonny@example.com', 3),
 (2, 'Jane Smith', 'janey@example.com', 2),
