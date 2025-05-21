@@ -85,23 +85,31 @@ try {
 }
 }); 
 
-
-
-
-
-
-app.get('/userLibrary/:userID', async function (req, res) {
-    const userID = req.params.userID;
+app.post('/games', async function (req, res) {
     try {
-        if (!userID) {
-            throw new Error("No ID provided");
+        const query = await db.query(`INSERT INTO games (name, genreID, platformID, numUsers,
+                        rating, description) VALUES ('${res.body.name}', ${res.body.genreID}, 
+                        ${res.body.platformID}, ${res.body.numUsers}, ${res.body.rating}, 
+                        '${res.body.description}'`);
+        if (query.affectedRows == 0) {
+            res.status(404).send("Game not added to database");
         }
+        res.status(201).send("successfully added to database");
+    } catch (error) {
+        console.error("/games could nott add new game", error);
+    }
+});
 
-        // sends query for user library based off userID
-        const library = await db.query(basic_table + 
-            ` INNER JOIN userLibrary ON userLibrary.gameID = games.gameID
-            INNER JOIN users ON users.userID = userLibrary.userID
-            WHERE users.userID = ${userID};`);
+app.put('/games/:gameID', async function (req, res) {
+    try {
+        const query = await db.query(`UPDATE games 
+                             SET name = '${res.body.name}', 
+                                genreID = ${res.body.genreID}, 
+                                platformID = ${res.body.platformID}, 
+                                numUsers = ${res.body.numUsers}, 
+                                rating = ${res.body.rating}, 
+                                description = '${res.body.description}' 
+                            WHERE gameID = ${res.body.gameID};`);
     
         res.status(200).json(library);
 
