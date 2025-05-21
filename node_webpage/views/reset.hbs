@@ -1,0 +1,31 @@
+ <h1>{{title}}</h1>
+
+<button id="reset-btn">Reset Database</button>
+
+<p id="message"></p>
+
+<script>
+  const btn = document.getElementById('reset-btn');
+  const msg = document.getElementById('message');
+
+  btn.addEventListener('click', async () => {
+    btn.disabled = true;  // Disable button to avoid double clicks
+    msg.textContent = 'Resetting...';
+
+    try {
+      const response = await fetch('/reset-db', { method: 'POST' });
+      const text = await response.text();  // Expect a plain text or json response
+
+      if (response.ok) {
+        msg.textContent = 'Database reset successfully!';
+      } else {
+        msg.textContent = 'Failed to reset database.';
+      }
+    } catch (error) {
+      msg.textContent = 'Error resetting database.';
+      console.error(error);
+    } finally {
+      btn.disabled = false;
+    }
+  });
+</script>
