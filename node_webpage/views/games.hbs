@@ -5,8 +5,8 @@
     <tr>
       <th>ID</th>
       <th>Name</th>
-      <th>Genre ID</th>
-      <th>Platform ID</th>
+      <th>Genre</th>
+      <th>Platform</th>
       <th>Users</th>
       <th>Rating</th>
       <th>Description</th>
@@ -14,81 +14,29 @@
     </tr>
   </thead>
   <tbody>
+    {{#each games}}
     <tr>
-      <td>1</td>
-      <td>The Witcher 3</td>
-      <td>1</td>
-      <td>1</td>
-      <td>1000</td>
-      <td>10</td>
-      <td>An open-world RPG set in a fantasy universe.</td>
+      <td>{{gameID}}</td>
+      <td>{{name}}</td>
+      <td>{{genre}}</td>
+      <td>{{platform}}</td>
+      <td>{{numUsers}}</td>
+      <td>{{rating}}</td>
+      <td>{{description}}</td>
       <td>
-        <form>
-            <button>Delete</button>
+        <form action="/delete-game" method="POST">
+          <input type="hidden" name="gameID" value="{{gameID}}" />
+          <button type="submit">Delete</button>
         </form>
       </td>
     </tr>
-    <tr>
-      <td>2</td>
-      <td>Halo Infinite</td>
-      <td>2</td>
-      <td>2</td>
-      <td>5000</td>
-      <td>9</td>
-      <td>A first-person shooter game set in a sci-fi universe.</td>
-      <td>
-        <form>
-            <button>Delete</button>
-        </form>
-      </td>
-    </tr>
-    <tr>
-      <td>3</td>
-      <td>God of War</td>
-      <td>3</td>
-      <td>3</td>
-      <td>3000</td>
-      <td>10</td>
-      <td>An action-adventure game based on Norse mythology.</td>
-      <td>
-        <form>
-            <button>Delete</button>
-        </form>
-      </td>
-    </tr>
-    <tr>
-      <td>4</td>
-      <td>Zelda: Breath of the Wild</td>
-      <td>4</td>
-      <td>4</td>
-      <td>2000</td>
-      <td>10</td>
-      <td>An open-world action-adventure game set in Hyrule.</td>
-      <td>
-        <form>
-            <button>Delete</button>
-        </form>
-      </td>
-    </tr>
-    <tr>
-      <td>5</td>
-      <td>Candy Crush Saga</td>
-      <td>5</td>
-      <td>5</td>
-      <td>15000</td>
-      <td>8</td>
-      <td>A match-three puzzle game with colorful candies.</td>
-      <td>
-        <form>
-            <button>Delete</button>
-        </form>
-      </td>
-    </tr>
+    {{/each}}
   </tbody>
 </table>
 
+
 <h1>Add Game</h1>
-<form action="/create" method="POST">
+<form action="/add-game" method="POST">
   <label for="name">Game Name</label>
   <input type="text" id="name" name="name" required>
 
