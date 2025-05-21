@@ -92,8 +92,9 @@ app.get('/userLibrary', async function (req, res) {
 }); // This is the page for user libraries
 app.get('/reset', (req, res) => {
   res.render('reset', { title: 'Reset Database' });
-});
+});// This is the reset page, only for displaying the reset button
 
+// This is function route to reset the database, its a post request to call the stored procedure
 app.post('/reset-db', async (req, res) => {
   try {
     const sql = `CALL resetDatabase();`;
@@ -125,7 +126,7 @@ try {
 }); 
 
 
-
+//had to modify the delete game function to delete from userLibrary first, then games
 
 app.post('/delete-game', async (req, res) => {
   const gameID = req.body.gameID;
