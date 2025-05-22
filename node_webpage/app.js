@@ -23,7 +23,7 @@ const basic_table = `SELECT games.gameID, games.name AS name, genres.name AS gen
                         games.rating, games.description 
                     FROM games 
                     INNER JOIN genres ON genres.genreID = games.genreID 
-                    INNER JOIN platforms ON platforms.platformID = games.platformID `;
+                    INNER JOIN platforms ON platforms.platformID = games.platformID\n`;
 const PORT = 53005;     // Set a port number
 
 // Database 
@@ -47,59 +47,73 @@ app.set('views', path.join(__dirname, 'views'));
 
 app.get('/', async function (req, res) {
 
-    res.render('index', {title: 'Home'}); // This is the home page
+    res.status(200).render('index', {title: 'Home'}); // This is the home page
 });
+
 //pages for each entity
 app.get('/games', async function (req, res) {// TODO, needs to properly render the genre and platform names; not their IDs
     try {
         const [games] = await db.query(basic_table + ` ORDER BY games.rating DESC;`);
         console.log(games);
-        res.render('games', { title: 'Games', games });
+        res.status(200).render('games', { title: 'Games', games });
     } catch (error) {
         console.error('Failed to fetch games:', error);
         res.status(500).send('Internal Server Error');
     }
-}); // This is the games page
+}); 
+
+// This is the games page
 app.get('/users', async function (req, res) {
     try {
         const [users] = await db.query(`SELECT * FROM users;`);
-        res.render('users', { title: 'Users', users });
+        res.status(200).render('users', { title: 'Users', users });
     } catch (error) {
         console.error('Failed to fetch users:', error);
         res.status(500).send('Internal Server Error');
     }
-}); // This is the users page
+}); 
+
+// This is the users page
 app.get('/genres', async function (req, res) {
     try {
         const [genres] = await db.query(`SELECT * FROM genres;`);
-        res.render('genres', { title: 'Genres', genres });
+        res.status(200).render('genres', { title: 'Genres', genres });
     } catch (error) {
         console.error('Failed to fetch genres:', error);
         res.status(500).send('Internal Server Error');
     }
-}); // This is the genres page
+}); 
+
+// This is the genres page
 app.get('/platforms', async function (req, res) {
     try {
         const [platforms] = await db.query(`SELECT * FROM platforms;`);
-        res.render('platforms', { title: 'Platforms', platforms });
+        res.status(200).render('platforms', { title: 'Platforms', platforms });
     } catch (error) {
         console.error('Failed to fetch platforms:', error);
         res.status(500).send('Internal Server Error');
     }
 }); // This is the platform page
 app.get('/userLibrary', async function (req, res) {
-    res.render('userLibrary', {title: 'User Library'});
+    try {
+        const [userLibrary] = await db.query(`SELECT * FROM userLibrary;`);
+        res.status(200).render('userLibrary', {title: 'User Library'}, userLibrary);
+    } catch (error) {
+        console.error('Failed to fetch userLibrary');
+        res.status(5000).send('Internal Server Error');
+    }
 }); // This is the page for user libraries
 app.get('/reset', (req, res) => {
-  res.render('reset', { title: 'Reset Database' });
+  res.status(200).render('reset', { title: 'Reset Database' });
 });// This is the reset page, only for displaying the reset button
+
 
 // This is function route to reset the database, its a post request to call the stored procedure
 app.post('/reset-db', async (req, res) => {
   try {
     const sql = `CALL resetDatabase();`;
     await db.query(sql);
-    res.status(200).send('Success');
+    res.status(201).send('Success');
   } catch (err) {
     console.error('Error calling stored procedure:', err);
     res.status(500).send('Failed to reset database');
@@ -163,12 +177,18 @@ app.post('/add-game', async function (req, res) {
     }
 });
 
+app.delete()
 
 app.get('/userLibrary/:userID', async function (req, res) {
     const userID = req.params.userID;
     try {
         if (!userID) {
             throw new Error("No ID provided");
+        }
+    } catch (error) {
+
+    }
+});
 app.post('/games', async function (req, res) {
     try {
         const query = await db.query(`INSERT INTO games (name, genreID, platformID, numUsers,
