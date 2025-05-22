@@ -1,3 +1,5 @@
+
+DROP PROCEDURE IF EXISTS deleteGame;
 DELIMITER //
 
 CREATE PROCEDURE deleteGame(IN gameID INT)
