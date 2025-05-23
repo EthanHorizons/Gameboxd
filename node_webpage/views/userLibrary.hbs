@@ -20,34 +20,23 @@
     </tr>
   </thead>
   <tbody>
+    {{#each library}}
     <tr>
-      <td>1</td>
-      <td>The Witcher 3</td>
-      <td>1</td>
-      <td>1</td>
-      <td>1000</td>
-      <td>10</td>
-      <td>An open-world RPG set in a fantasy universe.</td>
+      <td>{{gameID}}</td>
+      <td>{{name}}</td>
+      <td>{{genreID}}</td>
+      <td>{{platformID}}</td>
+      <td>{{numUsers}}</td>
+      <td>{{rating}}</td>
+      <td>{{description}}</td>
       <td>
-        <form>
-            <button>Delete from Library</button>
+        <form action="/delete-from-library" method="POST">
+          <input type="hidden" name="gameID" value="{{gameID}}" />
+          <button type="submit">Delete from Library</button>
         </form>
       </td>
     </tr>
-    <tr>
-      <td>3</td>
-      <td>God of War</td>
-      <td>3</td>
-      <td>3</td>
-      <td>3000</td>
-      <td>10</td>
-      <td>An action-adventure game based on Norse mythology.</td>
-      <td>
-        <form>
-            <button>Delete from Library</button>
-        </form>
-      </td>
-    </tr>
+    {{/each}}
   </tbody>
 </table>
 <h1>Add Game to Library</h1>

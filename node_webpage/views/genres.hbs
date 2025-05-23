@@ -1,4 +1,5 @@
 <h1>Genres</h1>
+
 <table>
   <thead>
     <tr>
@@ -8,20 +9,22 @@
     </tr>
   </thead>
   <tbody>
-    <tr><td>1</td><td>horror</td><td class="actions"><button class="edit-btn">Edit</button><button class="delete-btn">Delete</button></td></tr>
-    <tr><td>2</td><td>adventure</td><td class="actions"><button class="edit-btn">Edit</button><button class="delete-btn">Delete</button></td></tr>
-    <tr><td>3</td><td>action</td><td class="actions"><button class="edit-btn">Edit</button><button class="delete-btn">Delete</button></td></tr>
-    <tr><td>4</td><td>multiplayer</td><td class="actions"><button class="edit-btn">Edit</button><button class="delete-btn">Delete</button></td></tr>
-    <tr><td>5</td><td>fps</td><td class="actions"><button class="edit-btn">Edit</button><button class="delete-btn">Delete</button></td></tr>
-    <tr><td>6</td><td>rpg</td><td class="actions"><button class="edit-btn">Edit</button><button class="delete-btn">Delete</button></td></tr>
-    <tr><td>7</td><td>singleplayer</td><td class="actions"><button class="edit-btn">Edit</button><button class="delete-btn">Delete</button></td></tr>
-    <tr><td>8</td><td>rougelike</td><td class="actions"><button class="edit-btn">Edit</button><button class="delete-btn">Delete</button></td></tr>
-    <tr><td>9</td><td>puzzle</td><td class="actions"><button class="edit-btn">Edit</button><button class="delete-btn">Delete</button></td></tr>
-    <tr><td>10</td><td>turn-based</td><td class="actions"><button class="edit-btn">Edit</button><button class="delete-btn">Delete</button></td></tr>
-    <tr><td>11</td><td>simulation</td><td class="actions"><button class="edit-btn">Edit</button><button class="delete-btn">Delete</button></td></tr>
-    <tr><td>12</td><td>sports</td><td class="actions"><button class="edit-btn">Edit</button><button class="delete-btn">Delete</button></td></tr>
-    <tr><td>13</td><td>open-world</td><td class="actions"><button class="edit-btn">Edit</button><button class="delete-btn">Delete</button></td></tr>
-    <tr><td>14</td><td>strategy</td><td class="actions"><button class="edit-btn">Edit</button><button class="delete-btn">Delete</button></td></tr>
+    {{#each genres}}
+    <tr>
+      <td>{{genreID}}</td>
+      <td>{{name}}</td>
+      <td class="actions">
+        <form action="/edit-genre" method="GET" style="display:inline;">
+          <input type="hidden" name="genreID" value="{{genreID}}" />
+          <button type="submit">Edit</button>
+        </form>
+        <form action="/delete-genre" method="POST" style="display:inline;">
+          <input type="hidden" name="genreID" value="{{genreID}}" />
+          <button type="submit">Delete</button>
+        </form>
+      </td>
+    </tr>
+    {{/each}}
   </tbody>
 </table>
 

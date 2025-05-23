@@ -11,60 +11,29 @@
     </tr>
   </thead>
   <tbody>
+    {{#each users}}
     <tr>
-      <td>1</td>
-      <td>John Doe</td>
-      <td>jonny@example.com</td>
-      <td>3</td>
+      <td>{{userID}}</td>
+      <td>{{username}}</td>
+      <td>{{email}}</td>
+      <td>{{numGames}}</td>
       <td class="actions">
-        <button class="edit-btn">Edit</button>
-        <button class="delete-btn">Delete</button>
+        <form action="/edit-user" method="GET" style="display:inline;">
+          <input type="hidden" name="userID" value="{{userID}}" />
+          <button type="submit">Edit</button>
+        </form>
+        <form action="/delete-user" method="POST" style="display:inline;">
+          <input type="hidden" name="userID" value="{{userID}}" />
+          <button type="submit">Delete</button>
+        </form>
       </td>
     </tr>
-    <tr>
-      <td>2</td>
-      <td>Jane Smith</td>
-      <td>janey@example.com</td>
-      <td>2</td>
-      <td class="actions">
-        <button class="edit-btn">Edit</button>
-        <button class="delete-btn">Delete</button>
-      </td>
-    </tr>
-    <tr>
-      <td>3</td>
-      <td>Alice Johnson</td>
-      <td>coolio@example.com</td>
-      <td>2</td>
-      <td class="actions">
-        <button class="edit-btn">Edit</button>
-        <button class="delete-btn">Delete</button>
-      </td>
-    </tr>
-    <tr>
-      <td>4</td>
-      <td>Bob Brown</td>
-      <td>epic@example.com</td>
-      <td>2</td>
-      <td class="actions">
-        <button class="edit-btn">Edit</button>
-        <button class="delete-btn">Delete</button>
-      </td>
-    </tr>
-    <tr>
-      <td>5</td>
-      <td>Charlie Black</td>
-      <td>newemail@example.com</td>
-      <td>1</td>
-      <td class="actions">
-        <button class="edit-btn">Edit</button>
-        <button class="delete-btn">Delete</button>
-      </td>
-    </tr>
+    {{/each}}
   </tbody>
 </table>
+
 <h1>Add User</h1>
-<form action="PLACEHOLDER" method="POST">
+<form action="/add-user" method="POST">
   <label for="username">Username</label>
   <input type="text" id="username" name="username" required>
 
