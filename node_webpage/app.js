@@ -53,55 +53,54 @@ app.get('/', async function (req, res) {
 //pages for each entity
 app.get('/games', async function (req, res) {// TODO, needs to properly render the genre and platform names; not their IDs
     try {
-        const [games] = await db.query(basic_table + ` ORDER BY games.rating DESC;`);
-        console.log(games);
-        res.status(200).render('games', { title: 'Games', games });
-    } catch (error) {
-        console.error('Failed to fetch games:', error);
-        res.status(500).send('Internal Server Error');
-    }
+        const [rows] = await db.promise().query("CALL getGames();");
+        res.status(200).json(rows)
+    } catch (err) {
+        console.error('Error calling stored procedure:', err);
+        res.status(500).send('Failed to fetch games');
+    } 
 }); 
 
 // This is the games page
 app.get('/users', async function (req, res) {
     try {
-        const [users] = await db.query(`SELECT * FROM users;`);
-        res.status(200).render('users', { title: 'Users', users });
-    } catch (error) {
-        console.error('Failed to fetch users:', error);
-        res.status(500).send('Internal Server Error');
-    }
+        const [rows] = await db.promise().query("CALL getUsers();");
+        res.status(200).json(rows)
+    } catch (err) {
+        console.error('Error calling stored procedure:', err);
+        res.status(500).send('Failed to fetch users');
+    } 
 }); 
 
 // This is the users page
 app.get('/genres', async function (req, res) {
     try {
-        const [genres] = await db.query(`SELECT * FROM genres;`);
-        res.status(200).render('genres', { title: 'Genres', genres });
-    } catch (error) {
-        console.error('Failed to fetch genres:', error);
-        res.status(500).send('Internal Server Error');
-    }
+        const [rows] = await db.promise().query("CALL getGenres();");
+        res.status(200).json(rows)
+    } catch (err) {
+        console.error('Error calling stored procedure:', err);
+        res.status(500).send('Failed to fetch genres');
+    } 
 }); 
 
 // This is the genres page
 app.get('/platforms', async function (req, res) {
     try {
-        const [platforms] = await db.query(`SELECT * FROM platforms;`);
-        res.status(200).render('platforms', { title: 'Platforms', platforms });
-    } catch (error) {
-        console.error('Failed to fetch platforms:', error);
-        res.status(500).send('Internal Server Error');
-    }
+        const [rows] = await db.promise().query("CALL getPlatforms();");
+        res.status(200).json(rows)
+    } catch (err) {
+        console.error('Error calling stored procedure:', err);
+        res.status(500).send('Failed to fetch platforms');
+    } 
 }); // This is the platform page
 app.get('/userLibrary', async function (req, res) {
     try {
-        const [userLibrary] = await db.query(`SELECT * FROM userLibrary;`);
-        res.status(200).render('userLibrary', {title: 'User Library'}, userLibrary);
-    } catch (error) {
-        console.error('Failed to fetch userLibrary');
-        res.status(5000).send('Internal Server Error');
-    }
+        const [rows] = await db.promise().query("CALL getUserLibrary();");
+        res.status(200).json(rows)
+    } catch (err) {
+        console.error('Error calling stored procedure:', err);
+        res.status(500).send('Failed to fetch userLibary');
+    } 
 }); // This is the page for user libraries
 app.get('/reset', (req, res) => {
   res.status(200).render('reset', { title: 'Reset Database' });
