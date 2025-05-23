@@ -60,12 +60,14 @@ DELIMITER //
 
 CREATE PROCEDURE getUserLibrary(IN inUserID INT)
 BEGIN
-    SELECT userLibrary.gameID AS ID, games.name, games.genreID, 
-        games.platformID, games.numUsers AS users, games.rating, 
+    SELECT userLibrary.gameID AS ID, games.name, genres.name AS genre, 
+        platforms.platform, games.numUsers AS users, games.rating, 
         games.description
     FROM userLibrary
     INNER JOIN games ON games.gameID = userLibrary.gameID
     INNER JOIN users ON users.userID = userLibrary.userID
+    INNER JOIN genres ON genres.genreID = games.genreID
+    INNER JOIN platforms ON platforms.platformID = games.platformID
     WHERE userLibrary.userID = inUserID
     ORDER BY games.name DESC;
 END //
