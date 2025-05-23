@@ -51,10 +51,10 @@ app.get('/', async function (req, res) {
 });
 
 //pages for each entity
-app.get('/games', async function (req, res) {// TODO, needs to properly render the genre and platform names; not their IDs
+app.get('/games', async function (req, res) {
     try {
-        const [rows] = await db.promise().query("CALL getGames();");
-        res.status(200).json(rows)
+        const [rows] = await db.query("CALL getGames();");
+        res.render('games', { title: 'Games', games: rows[0] });
     } catch (err) {
         console.error('Error calling stored procedure:', err);
         res.status(500).send('Failed to fetch games');
@@ -64,8 +64,8 @@ app.get('/games', async function (req, res) {// TODO, needs to properly render t
 // This is the games page
 app.get('/users', async function (req, res) {
     try {
-        const [rows] = await db.promise().query("CALL getUsers();");
-        res.status(200).json(rows)
+        const [rows] = await db.query("CALL getUsers();");
+        res.render('users', { title: 'Users', users: rows[0] });
     } catch (err) {
         console.error('Error calling stored procedure:', err);
         res.status(500).send('Failed to fetch users');
@@ -75,8 +75,8 @@ app.get('/users', async function (req, res) {
 // This is the users page
 app.get('/genres', async function (req, res) {
     try {
-        const [rows] = await db.promise().query("CALL getGenres();");
-        res.status(200).json(rows)
+        const [rows] = await db.query("CALL getGenres();");
+        res.render('genres', { title: 'Genres', genres: rows[0] });
     } catch (err) {
         console.error('Error calling stored procedure:', err);
         res.status(500).send('Failed to fetch genres');
@@ -86,8 +86,8 @@ app.get('/genres', async function (req, res) {
 // This is the genres page
 app.get('/platforms', async function (req, res) {
     try {
-        const [rows] = await db.promise().query("CALL getPlatforms();");
-        res.status(200).json(rows)
+        const [rows] = await db.query("CALL getPlatforms();");
+        res.render('platforms', { title: 'Platforms', platforms: rows[0] });
     } catch (err) {
         console.error('Error calling stored procedure:', err);
         res.status(500).send('Failed to fetch platforms');
@@ -95,11 +95,11 @@ app.get('/platforms', async function (req, res) {
 }); // This is the platform page
 app.get('/userLibrary', async function (req, res) {
     try {
-        const [rows] = await db.promise().query("CALL getUserLibrary();");
-        res.status(200).json(rows)
+        const [rows] = await db.query("CALL getUserLibrary(1);");
+        res.render('userLibrary', { title: 'User Library', userLibrary: rows[0] });
     } catch (err) {
         console.error('Error calling stored procedure:', err);
-        res.status(500).send('Failed to fetch userLibary');
+        res.status(500).send('Failed to fetch userLibrary');
     } 
 }); // This is the page for user libraries
 app.get('/reset', (req, res) => {
@@ -175,8 +175,6 @@ app.post('/add-game', async function (req, res) {
         res.status(500).send();
     }
 });
-
-app.delete()
 
 app.get('/userLibrary/:userID', async function (req, res) {
     const userID = req.params.userID;
