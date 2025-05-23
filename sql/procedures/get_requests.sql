@@ -58,7 +58,7 @@ DELIMITER ;
 DROP PROCEDURE IF EXISTS getUserLibrary;
 DELIMITER //
 
-CREATE PROCEDURE getUserLibrary(IN inUserID INT)
+CREATE PROCEDURE getUserLibrary(IN inUsername VARCHAR(255))
 BEGIN
     SELECT userLibrary.gameID, games.name, genres.name AS genre, 
         platforms.platform, games.numUsers, games.rating, 
@@ -68,7 +68,7 @@ BEGIN
     INNER JOIN users ON users.userID = userLibrary.userID
     INNER JOIN genres ON genres.genreID = games.genreID
     INNER JOIN platforms ON platforms.platformID = games.platformID
-    WHERE userLibrary.userID = inUserID
+    WHERE users.username = inUsername
     ORDER BY games.name DESC;
 END //
 
