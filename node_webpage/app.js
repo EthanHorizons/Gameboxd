@@ -93,9 +93,9 @@ app.get('/platforms', async function (req, res) {
         res.status(500).send('Failed to fetch platforms');
     } 
 }); // This is the platform page
-app.get('/userLibrary', async function (req, res) {
+app.get('/userLibrary:id', async function (req, res) {
     try {
-        const [rows] = await db.promise().query("CALL getUserLibrary();");
+        const [rows] = await db.promise().query(`CALL getUserLibrary(${req.params.id});`);
         res.status(200).json(rows)
     } catch (err) {
         console.error('Error calling stored procedure:', err);
