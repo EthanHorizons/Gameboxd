@@ -68,7 +68,7 @@ BEGIN
     INNER JOIN users ON users.userID = userLibrary.userID
     INNER JOIN genres ON genres.genreID = games.genreID
     INNER JOIN platforms ON platforms.platformID = games.platformID
-    WHERE users.username = inUsername
+    WHERE users.userID = inUsername
     ORDER BY games.name DESC;
 END //
 
