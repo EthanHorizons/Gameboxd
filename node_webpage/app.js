@@ -96,6 +96,7 @@ app.get('/platforms', async function (req, res) {
 app.get('/userLibrary/:id', async function (req, res) {
     try {
         const [rows] = await db.query(`CALL getUserLibrary(?);`, [req.params.id]);
+        console.log(rows[0]);
         res.render('userLibrary', { title: 'User Library', library: rows[0], userID: req.params.id });
     } catch (err) {
         console.error('Error calling stored procedure:', err);
