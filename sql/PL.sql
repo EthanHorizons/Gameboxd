@@ -57,11 +57,11 @@ DELIMITER ;
 -- get userLibrary table
 DROP PROCEDURE IF EXISTS getUserLibrary;
 DELIMITER //
-
+-- ID	Name	Genre ID	Platform ID	Users	Rating	Description
 CREATE PROCEDURE getUserLibrary(IN inUserID INT)
 BEGIN
     SELECT userLibrary.gameID AS ID, games.name, genres.name AS genre, 
-        platforms.platform, games.numUsers AS users, games.rating, 
+        platforms.platform, games.numUsers, games.rating, 
         games.description
     FROM userLibrary
     INNER JOIN games ON games.gameID = userLibrary.gameID
