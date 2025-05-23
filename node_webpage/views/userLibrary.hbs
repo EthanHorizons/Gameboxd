@@ -32,14 +32,14 @@
     <tr>
       <td>{{ID}}</td>
       <td>{{name}}</td>
-      <td>{{genreID}}</td>
-      <td>{{platformID}}</td>
+      <td>{{genre}}</td>
+      <td>{{platform}}</td>
       <td>{{users}}</td>
       <td>{{rating}}</td>
       <td>{{description}}</td>
       <td>
         <form action="/delete-from-library" method="POST">
-          <input type="hidden" name="gameID" value="{{gameID}}" />
+          <input type="hidden" name="gameID" value="{{ID}}" />
           <button type="submit">Delete from Library</button>
         </form>
       </td>
