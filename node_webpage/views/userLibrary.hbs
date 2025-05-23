@@ -1,9 +1,17 @@
 <h1>Select User</h1>
-<form action="PLACEHOLDER" method="POST">
+<!--<form action="PLACEHOLDER" method="POST">
   <label for="username">Username</label>
   <input type="text" id="username" name="username" value="Alice Johnson" required>
 
   <button type="submit">Find User</button>
+</form>-->
+
+<form id="userNavForm" action="/userLibrary/{{userID}}" method="GET">
+  <input type="hidden" id="userID" name="userID" value="{{userID}}" />
+
+  <button type="button" id="prevBtn">&#8592;</button>
+  <span id="userIDDisplay">User ID: {{userID}}</span>
+  <button type="button" id="nextBtn">&#8594;</button>
 </form>
 
 <table>
@@ -52,3 +60,33 @@
 
   <button type="submit">Add Game</button>
 </form>
+<script>
+  const MIN_ID = 1;
+  const MAX_ID = 5;
+
+  const form = document.getElementById('userNavForm');
+  const userIDInput = document.getElementById('userID');
+  const display = document.getElementById('userIDDisplay');
+  const prevBtn = document.getElementById('prevBtn');
+  const nextBtn = document.getElementById('nextBtn');
+
+  const addForm = document.getElementById('addGameForm');
+  const addUserIDInput = document.getElementById('addUserID');
+
+  function navigate(delta) {
+    let id = parseInt(userIDInput.value);
+    id += delta;
+    if (id < MIN_ID || id > MAX_ID) return;
+
+    userIDInput.value = id;
+    display.textContent = `User ID: ${id}`;
+    form.action = `/userLibrary/${id}`;
+
+
+
+    form.submit();
+  }
+
+  prevBtn.addEventListener('click', () => navigate(-1));
+  nextBtn.addEventListener('click', () => navigate(1));
+</script>
