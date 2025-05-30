@@ -120,18 +120,12 @@ app.post('/reset-db', async (req, res) => {
   }
 });
 
-app.post('/insert', async function (req, res) {
+// create a game - should I send all of the games in the response body/just the new game?
+app.post('/create-game', async function (req, res) {
 try {
-    const { userID, gameID } = req.body;
-    
-    if (!userID || !gameID) {
-        return res.status(400).send("userID or gameID missing from req.body");
-    }
-
-    const query = 'INSERT INTO userLibrary (userID, gameID) VALUES (' + userID + ', ' + gameID + ');';
-
-    await db.query(query);
-
+    const { name, genreID, platformID, numUsers, rating, description } = req.body;
+    const sql = `CALL insertGame(name, genreID, platformID, numUsers, rating, description);`;
+    await db.query(sql);
     res.status(201).send("Game successfully added to library");
 } catch (error) {
     console.error("Error adding game to library", error);
@@ -139,9 +133,23 @@ try {
 }
 }); 
 
+// edit a game
+app.post('/edit-game', async function (req, res) {
+   try {
+    // Make sure this takes in every input, even if multiple of these values are undefined
+    // PL will coalesce to take the older value
+    const { name, genreID, platformID, numUsers, rating, description } = req.body;
+    const sql = `CALL updateGame(name, genreID, platformID, numUsers, rating, description);`;
+    await db.query(sql);
+    res.status(201).send("Game successfully edited");
+   } catch (error) {
+    console.error("Error editing game", error)
+    res.status(500).send();
+   } 
+});
 
 //had to modify the delete game function to delete from userLibrary first, then games
-
+// shouldn't this be app.delete?
 app.post('/delete-game', async (req, res) => {
   const gameID = req.body.gameID;
   try {

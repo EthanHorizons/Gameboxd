@@ -1,14 +1,14 @@
 DELIMITER //
 CREATE PROCEDURE resetDatabase()
 BEGIN
-    -- SQL file to create all of our tables
+    SET FOREIGN_KEY_CHECKS=0;
+
     DROP TABLE IF EXISTS userLibrary;
     DROP TABLE IF EXISTS games;
     DROP TABLE IF EXISTS genres;
     DROP TABLE IF EXISTS platforms;
     DROP TABLE IF EXISTS users;
 
-    SET FOREIGN_KEY_CHECKS=0;
 
     CREATE TABLE users (
         userID int(11) NOT NULL AUTO_INCREMENT,
@@ -35,7 +35,7 @@ BEGIN
         name varchar(255) NOT NULL,
         genreID int(11) NOT NULL,
         platformID int(11) NOT NULL,
-        numUsers int (11),
+        numUsers int(11),
         rating int(11),
         description varchar(255),
         PRIMARY KEY (gameID),
