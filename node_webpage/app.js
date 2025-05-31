@@ -120,18 +120,6 @@ app.post('/reset-db', async (req, res) => {
   }
 });
 
-// create a game - should I send all of the games in the response body/just the new game?
-app.post('/create-game', async function (req, res) {
-try {
-    const { name, genreID, platformID, numUsers, rating, description } = req.body;
-    const sql = `CALL insertGame(name, genreID, platformID, numUsers, rating, description);`;
-    await db.query(sql);
-    res.status(201).send("Game successfully added to library");
-} catch (error) {
-    console.error("Error adding game to library", error);
-    res.status(500).send();
-}
-}); 
 
 // edit a game
 app.post('/edit-game', async function (req, res) {
@@ -139,9 +127,9 @@ app.post('/edit-game', async function (req, res) {
     // Make sure this takes in every input, even if multiple of these values are undefined
     // PL will coalesce to take the older value
     const { name, genreID, platformID, numUsers, rating, description } = req.body;
-    const sql = `CALL updateGame(name, genreID, platformID, numUsers, rating, description);`;
-    await db.query(sql);
-    res.status(201).send("Game successfully edited");
+    const sql = `CALL updateGame(?, ?, ?, ?, ?, ?);`;
+    await db.query(sql, [name, genreID, platformID, numUsers, rating, description]);
+    res.status(201).redirect('/games').send("Game successfully edited");
    } catch (error) {
     console.error("Error editing game", error)
     res.status(500).send();
@@ -185,49 +173,6 @@ app.post('/add-game', async function (req, res) {
     }
 });
 
-app.get('/userLibrary/:userID', async function (req, res) {
-    const userID = req.params.userID;
-    try {
-        if (!userID) {
-            throw new Error("No ID provided");
-        }
-    } catch (error) {
-
-    }
-});
-app.post('/games', async function (req, res) {
-    try {
-        const query = await db.query(`INSERT INTO games (name, genreID, platformID, numUsers,
-                        rating, description) VALUES ('${res.body.name}', ${res.body.genreID}, 
-                        ${res.body.platformID}, ${res.body.numUsers}, ${res.body.rating}, 
-                        '${res.body.description}'`);
-        if (query.affectedRows == 0) {
-            res.status(404).send("Game not added to database");
-        }
-        res.status(201).send("successfully added to database");
-    } catch (error) {
-        console.error("/games could nott add new game", error);
-    }
-});
-
-app.put('/games/:gameID', async function (req, res) {
-    try {
-        const query = await db.query(`UPDATE games 
-                             SET name = '${res.body.name}', 
-                                genreID = ${res.body.genreID}, 
-                                platformID = ${res.body.platformID}, 
-                                numUsers = ${res.body.numUsers}, 
-                                rating = ${res.body.rating}, 
-                                description = '${res.body.description}' 
-                            WHERE gameID = ${res.body.gameID};`);
-    
-        res.status(200).json(library);
-
-    } catch (error) {
-        console.error("Error occured getting userLibary by userID", error);
-        res.status(500).send();
-    }
-});
 
 // gets game based off of gameID
 app.get('/games/:gameID', async function (req, res) {
@@ -239,7 +184,7 @@ app.get('/games/:gameID', async function (req, res) {
         const game = await db.query(basic_table + ` WHERE games.gameID = ${gameID};`);
         
         if (!game || game.length === 0) {
-            res.status(404).useChunkedEncodingByDefault("Game not found.");
+            res.status(404).send("Game not found.");
         }
 
         res.status(200).json(game);
@@ -310,24 +255,46 @@ app.get('/dashboard', async function (req, res) {
     
 });
 
-app.delete('/userLibrary/:userID', async function (req, res) {
-    const { gameID } = req.body;
-    const userID = req.params.userID;
-
+app.delete('/genre', async function (req, res) {
     try {
-        if (!gameID || !userID) {
-            throw new Error("User or game ID does not exist");
-        } 
+        const genreID = req.body.genreID;
+        await db.query(`CALL deleteGenre(?);`, [genreID]);
+        res.status(204).send();
+    } catch(error) {
+        console.error("Could not remove genre", error);
+        res.status(500).send();
+    }
+});
 
-        const query = await db.query(`DELETE FROM userLibrary 
-                        WHERE gameID = ${gameID} AND userID = ${userID};`);
+app.delete('/platform', async function (req, res) {
+    try {
+        const platformID = req.body.platformID;
+        await db.query(`CALL deletePlatform(?);`, [platformID]);
+        res.status(204).send();
+    } catch(error) {
+        console.error("Could not remove platform", error);
+        res.status(500).send();
+    }
+});
 
-        if (query.affectedRows === 0) {
-            throw new Error(`Could not delete row \nuserID: ${userID} gameID: ${gameID}`);
-        }
+app.delete('/users/:userID', async function (req, res) {
+    try {
+        const userID = req.params.userID;
+        await db.query(`CALL deleteUser(?);`, [userID]);
+        res.status(204).send();
+    } catch(error) {
+        console.error("Could not remove user", error);
+        res.status(500).send();
+    }
+});
 
-        res.status(204).send(query.affectedRows);
-    } catch (error) {
+app.delete('/userLibrary/:userID', async function (req, res) {
+    try {
+        const { gameID } = req.body;
+        const userID = req.params.userID;
+        await db.query(`CALL deleteGameFromUserLibrary(?, ?);`, [gameID, userID]);
+        res.status(204).send();
+    } catch(error) {
         console.error("Could not remove game from userLibrary", error);
         res.status(500).send();
     }
