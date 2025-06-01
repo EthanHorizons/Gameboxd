@@ -14,7 +14,7 @@ BEGIN
         userID int(11) NOT NULL AUTO_INCREMENT,
         username varchar(255) NOT NULL,
         email varchar(255) NOT NULL,
-        numGames int(11) NOT NULL,
+        numGames int(11) NOT NULL DEFAULT 0,
         PRIMARY KEY (userID)
     );
 
@@ -54,11 +54,11 @@ BEGIN
     -- insert data into tables
 
     INSERT INTO `users` (`userID`,`username`, `email`, `numGames`) VALUES
-    (1, 'John Doe', 'jonny@example.com', 3),
-    (2, 'Jane Smith', 'janey@example.com', 2),
-    (3, 'Alice Johnson', 'coolio@example.com', 2),
-    (4, 'Bob Brown', 'epic@example.com', 2),
-    (5, 'Charlie Black', 'newemail@example.com', 1);
+    (1, 'John Doe', 'jonny@example.com'),
+    (2, 'Jane Smith', 'janey@example.com'),
+    (3, 'Alice Johnson', 'coolio@example.com'),
+    (4, 'Bob Brown', 'epic@example.com'),
+    (5, 'Charlie Black', 'newemail@example.com');
 
     INSERT INTO `platforms` (`platformID`, `platform`) VALUES
     (1, 'PC'),

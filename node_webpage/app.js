@@ -45,6 +45,9 @@ app.set('views', path.join(__dirname, 'views'));
     ROUTES
 */
 
+
+/* GETS/SELECTS */
+
 app.get('/', async function (req, res) {
 
     res.status(200).render('index', {title: 'Home'}); // This is the home page
@@ -120,6 +123,7 @@ app.post('/reset-db', async (req, res) => {
   }
 });
 
+/* EDITS */
 
 // edit a game
 app.post('/edit-game', async function (req, res) {
@@ -138,6 +142,7 @@ app.post('/edit-game', async function (req, res) {
 
 //had to modify the delete game function to delete from userLibrary first, then games
 // shouldn't this be app.delete?
+// TODO CHANGE TO app.delete!!!!!!!!!!!!!!!!!!!!!
 app.post('/delete-game', async (req, res) => {
   const gameID = req.body.gameID;
   try {
@@ -255,10 +260,22 @@ app.get('/dashboard', async function (req, res) {
     
 });
 
+
+/* DELETES */
+
+// NOTE PLEASE READ:
+/* To make this compatible with multiple browsers, I switched the 
+DELETE requests to take variables from querys instead of from
+req.body. Otherwise, the delete requests should work. Please let me 
+know if they aren't working / you need help implementing it */
+
 app.delete('/genre', async function (req, res) {
     try {
-        const genreID = req.body.genreID;
-        await db.query(`CALL deleteGenre(?);`, [genreID]);
+        const genreID = req.query.genreID;
+        const [result] = await db.query(`DELETE FROM genres WHERE genreID = ?`, [genreID]);
+        if (result.affectedRows == 0) {
+            res.status(404).send("Genre not found");
+        }
         res.status(204).send();
     } catch(error) {
         console.error("Could not remove genre", error);
@@ -268,8 +285,11 @@ app.delete('/genre', async function (req, res) {
 
 app.delete('/platform', async function (req, res) {
     try {
-        const platformID = req.body.platformID;
-        await db.query(`CALL deletePlatform(?);`, [platformID]);
+        const platformID = req.query.platformID;
+        const [result] = await db.query(`DELETE FROM platforms WHERE platformID = ? `, [platformID]);
+        if (result.affectedRows == 0) {
+            res.status(404).send("Platform not found");
+        }
         res.status(204).send();
     } catch(error) {
         console.error("Could not remove platform", error);
@@ -277,11 +297,13 @@ app.delete('/platform', async function (req, res) {
     }
 });
 
-app.delete('/users/:userID', async function (req, res) {
+app.delete('/users/', async function (req, res) {
     try {
-        const userID = req.params.userID;
-        await db.query(`CALL deleteUser(?);`, [userID]);
-        res.status(204).send();
+        const userID = req.query.userID;
+        const [result] = await db.query(`DELETE FROM users WHERE userID = ? `, [userID]);
+        if (result.affectedRows == 0) {
+            res.status(404).send("User not found");
+        }
     } catch(error) {
         console.error("Could not remove user", error);
         res.status(500).send();
@@ -290,10 +312,12 @@ app.delete('/users/:userID', async function (req, res) {
 
 app.delete('/userLibrary/:userID', async function (req, res) {
     try {
-        const { gameID } = req.body;
+        const { gameID } = req.query.gameID;
         const userID = req.params.userID;
-        await db.query(`CALL deleteGameFromUserLibrary(?, ?);`, [gameID, userID]);
-        res.status(204).send();
+        const [result] = await db.query(`DELETE FROM userLibrary WHERE userID = ? AND gameID = ?`, [userID, gameID]);
+        if (result.affectedRows == 0) {
+            res.status(404).send("Game not found in user library");
+        }
     } catch(error) {
         console.error("Could not remove game from userLibrary", error);
         res.status(500).send();

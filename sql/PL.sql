@@ -101,6 +101,56 @@ END //
 
 DELIMITER ;
 
+DROP PROCEDURE IF EXISTS insertUser
+DELIMITER //
+CREATE PROCEDURE insertUser(
+    IN inUsername VARCHAR(255),
+    IN inPassword VARCHAR(255),
+    IN inEmail VARCHAR(255),
+    )
+    BEGIN
+        INSERT INTO users (username, password, email, numGames)
+        VALUES (inUsername, inPassword, inEmail);
+END //
+
+DELIMITTER ;
+
+
+DROP PROCEDURE IF EXISTS insertPlatform
+DELIMITER //
+CREATE PROCEDURE insertPlatform(IN inPlatform)
+    BEGIN 
+        INSERT INTO platforms (platform)
+        VALUES (inPlatform);
+END //
+
+DELIMITER ;
+
+
+DROP PROCEDURE IF EXISTS insertGenre
+DELIMITER //
+CREATE PROCEDURE insertGenre(IN inName)
+    BEGIN 
+        INSERT INTO genres (name)
+        VALUES (name);
+END //
+
+DELIMITTER ;
+
+
+DROP PROCEDURE IF EXISTS insertGameToLibrary
+DELIMITER //
+CREATE PROCEDURE insertGameToLibrary(
+    IN inUserID INT
+    IN inGameID INT)
+BEGIN
+    INSERT INTO userLibrary (userID, gameID)
+    VALUES (inUserID, inGameID);
+END //
+
+DELIMITTER ;
+
+
 
 
 /* UPDATES */
@@ -130,6 +180,23 @@ END //
 
 DELIMITER ;
 
+DROP PROCEDURE IF EXISTS updateUser
+DELIMITER //
+
+CREATE PROCEDURE updateUser(
+    IN inUserID INT,
+    IN inUsername VARCHAR(255),
+    IN inEmail VARCHAR(255),
+    )
+BEGIN
+        UPDATE users
+        SET
+            username = COALESCE(inUsername, username),
+            email = COALESCE(inEmail, email)
+        WHERE userID = inUserID;
+END //
+
+DELIMITER ;
 
 
 /* DELETES */
