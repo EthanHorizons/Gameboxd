@@ -130,9 +130,9 @@ app.post('/edit-game', async function (req, res) {
    try {
     // Make sure this takes in every input, even if multiple of these values are undefined
     // PL will coalesce to take the older value
-    const { name, genreID, platformID, numUsers, rating, description } = req.body;
+    const { gameID, name, genreID, platformID, numUsers, rating, description } = req.body;
     const sql = `CALL updateGame(?, ?, ?, ?, ?, ?);`;
-    await db.query(sql, [name, genreID, platformID, numUsers, rating, description]);
+    await db.query(sql, [gameID, name, genreID, platformID, numUsers, rating, description]);
     res.status(201).redirect('/games').send("Game successfully edited");
    } catch (error) {
     console.error("Error editing game", error)
