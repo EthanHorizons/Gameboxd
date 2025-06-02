@@ -103,7 +103,6 @@ body {
     background-position: center;
     background-repeat: no-repeat;
     background-size: cover;
-    height: 100vw;
     display: flex;
     justify-content: space-between;
     overflow: clip;
@@ -130,4 +129,21 @@ label {
     margin-bottom: 10px;
     display: block;
     font-family: 'exotcursive', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+.formGroup {
+    margin-bottom: 20px;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
+}
+.formTitle {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 30vw;
+}
+form {
+  align-items: center;
+  display: flex;
+  flex-direction: column;
 }
