@@ -178,3 +178,9 @@ button:hover {
           color: var(--highlight);
           background-color: var(--text-color);
       }
+.arrow {
+    font-weight: bold;
+    font-size: 3em;
+    color: var(--text-color);
+    margin-left: 5px;
+}
