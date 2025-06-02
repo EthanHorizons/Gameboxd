@@ -36,64 +36,60 @@
 
 
 <h1>Add Game</h1>
-<form action="/add-game" method="POST">
-  <label for="name">Game Name</label>
-  <input type="text" id="name" name="name" required>
+<form action="/add-game" method="POST" id="addGameForm">
+  <div class="formGroup">
 
-  <label for="genreID">Genre ID</label>
-  <select id="genreID" name="genreID" required>
-    <option value="">Select Genre</option>
-    <option value="1">RPG</option>
-    <option value="2">Shooter</option>
-    <option value="3">Action</option>
-    <option value="4">Adventure</option>
-    <option value="5">Puzzle</option>
-  </select>
+    <div class="formTitle">
+      <label for="name">Game Name</label>
+      <input type="text" id="name" name="name" required>
+    </div>
+    <div class="formTitle">
+      <label for="addGenreID">Genre ID</label>
+      <select id="addGenreID" name="genreID" required></select>
+    </div>
 
-  <label for="platformID">Platform ID</label>
-  <select id="platformID" name="platformID" required>
-    <option value="">Select Platform</option>
-    <option value="1">PC</option>
-    <option value="2">Xbox</option>
-    <option value="3">PlayStation</option>
-    <option value="4">Nintendo</option>
-    <option value="5">Mobile</option>
-  </select>
+    <div class="formTitle">
+      <label for="addPlatformID">Platform ID</label>
+      <select id="addPlatformID" name="platformID" required></select>
+    </div>
+  </div>
 
-  <label for="numUsers">Number of Users</label>
-  <input type="number" id="numUsers" name="numUsers" min="0" required>
+  <div class="formGroup">
+    <div class="formTitle">
+      <label for="numUsers">Number of Users</label>
+      <input type="number" id="numUsers" name="numUsers" min="0" required>
+    </div>
 
-  <label for="rating">Rating (1–10)</label>
-  <input type="number" id="rating" name="rating" min="1" max="10" required>
+    <div class="formTitle">
+      <label for="rating">Rating (1–10)</label>
+      <input type="number" id="rating" name="rating" min="1" max="10" required>
+    </div>
 
-  <label for="description">Description</label>
-  <input id="description" name="description" required></input>
+    <div class="formTitle">
+      <label for="description">Description</label>
+      <input id="description" name="description" required></input>
+    </div>
 
-  <button type="submit">Add Game</button>
+  </div>
+  <button type="submit" class="formGroup">Add Game</button>
+
 </form>
 
 <h1>Update Game</h1>
-<form action="PLACEHLDER" method="POST">
+<form action="/edit-game" method="POST">
   <label for="name">Game Name</label>
-  <input type="text" id="name" name="name" value="..." required>
-
-  <label for="genreID">Genre ID</label>
-  <select id="genreID" name="genreID" required>
-    <option value="1">RPG</option>
-    <option value="2">Shooter</option>
-    <option value="3" >Action</option>
-    <option value="4">Adventure</option>
-    <option value="5">Puzzle</option>
+  <select id="gameSelect" name="name" required>
+  <option value="">Select a game</option>
+  {{#each games}}
+    <option value="{{name}}">{{name}}</option>
+  {{/each}}
   </select>
 
-  <label for="platformID">Platform ID</label>
-  <select id="platformID" name="platformID" required>
-    <option value="1">PC</option>
-    <option value="2">Xbox</option>
-    <option value="3" >PlayStation</option>
-    <option value="4">Nintendo</option>
-    <option value="5">Mobile</option>
-  </select>
+  <label for="updateGenreID">Genre ID</label>
+  <select id="updateGenreID" name="genreID" required></select>
+
+  <label for="updatePlatformID">Platform ID</label>
+  <select id="updatePlatformID" name="platformID" required></select>
 
   <label for="numUsers">Number of Users</label>
   <input type="number" id="numUsers" name="numUsers" value="0" required>
@@ -106,3 +102,40 @@
 
   <button type="submit">Update Game</button>
 </form>
+<script>  
+  fetch('/get-platforms')
+    .then(res => res.json())
+    .then(data => {
+      const addSelect = document.getElementById('addPlatformID');
+      const updateSelect = document.getElementById('updatePlatformID');
+      data.forEach(platform => {
+        if (platform && platform.platformID && platform.platform) {
+          const option1 = document.createElement('option');
+          option1.value = platform.platformID;
+          option1.textContent = platform.platform;
+          addSelect.appendChild(option1);
+
+          const option2 = option1.cloneNode(true);
+          updateSelect.appendChild(option2);
+        }
+      });
+    });
+  fetch('/get-genres')
+    .then(res => res.json())
+    .then(data => {
+      console.log("Genres fetched:", data);
+      const addSelect = document.getElementById('addGenreID');
+      const updateSelect = document.getElementById('updateGenreID');
+      data.forEach(genre => {
+        if (genre && genre.genreID && genre.name) {
+          const option1 = document.createElement('option');
+          option1.value = genre.genreID;
+          option1.textContent = genre.name;
+          addSelect.appendChild(option1);
+
+          const option2 = option1.cloneNode(true);
+          updateSelect.appendChild(option2);
+        }
+      });
+    });
+</script>

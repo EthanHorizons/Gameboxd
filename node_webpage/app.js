@@ -158,9 +158,26 @@ app.post('/delete-game', async (req, res) => {
     res.status(500).send('Error deleting game');
   }
 });
-
-
-
+//need to grab genres, paltforms for live dropdowns
+app.get('/get-platforms', async function (req, res) {
+    try {
+        const [platforms] = await db.query("SELECT platformID, platform FROM platforms ORDER BY platform;");
+        res.status(200).json(platforms);
+    } catch (error) {
+        console.error("Error fetching platforms", error);
+        res.status(500).send();
+    }
+});
+app.get('/get-genres', async function (req, res) {
+    try {
+        const [genres] = await db.query("SELECT genreID, name FROM genres ORDER BY name;");
+        res.status(200).json(genres);
+    } catch (error) {
+        console.error("Error fetching genres", error);
+        res.status(500).send();
+    }
+});
+//actually adds to database
 app.post('/add-game', async function (req, res) {
     const { name, genreID, platformID, numUsers, rating, description } = req.body;
 
