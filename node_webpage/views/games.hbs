@@ -67,55 +67,63 @@
 
     <div class="formTitle">
       <label for="description">Description</label>
-      <input id="description" name="description" required></input>
+      <textarea id="description" name="description" rows="4" required></textarea>
     </div>
 
   </div>
-  <button type="submit" class="formGroup">Add Game</button>
+  <button type="submit">Add Game</button>
 
 </form>
 
 <h1>Update Game</h1>
-<form action="/edit-game" method="POST">
-  
-  <label for="name">Game Name</label>
-  <select id="gameSelect" name="gameID" required>
-  <option value="">Select a game</option>
-  {{#each games}}
-    <option 
-      value="{{gameID}}" 
-      data-name="{{name}}" 
-      data-numusers="{{numUsers}}"
-      data-rating="{{rating}}"
-      data-description="{{description}}"
-      {{#if @first}}selected{{/if}}>{{name}}</option>
-  {{/each}}
-  </select>
-  <div class="formTitle">
-    <label for="gameName">New Game Name</label>
-    <input type="text" id="gameName" name="name" required />
-  </div>
-  
-  <div class="formTitle">
-    <label for="updateGenreID">Genre ID</label>
-    <select id="updateGenreID" name="genreID" required></select>
+<form action="/edit-game" method="POST" id="updateGameForm">
+  <div class="formGroup">
+    <div class="formTitle">
+      <label for="name">Game Name</label>
+      <select id="gameSelect" name="gameID" required>
+      <option value="">Select a game</option>
+      {{#each games}}
+        <option 
+          value="{{gameID}}" 
+          data-name="{{name}}" 
+          data-numusers="{{numUsers}}"
+          data-rating="{{rating}}"
+          data-description="{{description}}"
+          {{#if @first}}selected{{/if}}>{{name}}</option>
+      {{/each}}
+      </select>
+    </div>
+    <div class="formTitle">
+      <label for="gameName">New Game Name</label>
+      <input type="text" id="gameName" name="name" required />
+    </div>
   </div>
 
-  <div class="formTitle">
-    <label for="updatePlatformID">Platform ID</label>
-    <select id="updatePlatformID" name="platformID" required></select>
+  <div class="formGroup">
+    <div class="formTitle">
+      <label for="updateGenreID">Genre ID</label>
+      <select id="updateGenreID" name="genreID" required></select>
+    </div>
+    <div class="formTitle">
+      <label for="updatePlatformID">Platform ID</label>
+      <select id="updatePlatformID" name="platformID" required></select>
+    </div>
+    <div class="formTitle">
+      <label for="UPnumUsers">Number of Users</label>
+      <input type="number" id="UPnumUsers" name="numUsers" value="0" required />
+    </div>
   </div>
+  <div class="formGroup">
+    <div class="formTitle">
+      <label for="UPrating">Rating (1–10)</label>
+      <input type="number" id="UPrating" name="rating" value="10" min="1" max="10" required />
+    </div>
 
-
-  <label for="numUsers">Number of Users</label>
-  <input type="number" id="UPnumUsers" name="numUsers" value="0" required>
-
-  <label for="rating">Rating</label>
-  <input type="number" id="UPrating" name="rating" value="10" min="1" max="10" required>
-
-  <label for="description">Description</label>
-  <textarea id="UPdescription" name="description" rows="4" required></textarea>
-
+    <div class="formTitle">
+      <label for="UPdescription">Description</label>
+      <textarea id="UPdescription" name="description" rows="4" required></textarea>
+    </div>
+  </div>
   <button type="submit">Update Game</button>
 </form>
 <script>
