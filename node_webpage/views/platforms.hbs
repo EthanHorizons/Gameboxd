@@ -13,11 +13,7 @@
       <td>{{platformID}}</td>
       <td>{{platform}}</td>
       <td class="actions">
-        <form action="/edit-platform" method="GET" style="display:inline;">
-          <input type="hidden" name="platformID" value="{{platformID}}" />
-          <button type="submit">Edit</button>
-        </form>
-        <form action="/delete-platform" method="POST" style="display:inline;">
+        <form action="/delete-platform" method="POST">
           <input type="hidden" name="platformID" value="{{platformID}}" />
           <button type="submit">Delete</button>
         </form>
@@ -27,9 +23,35 @@
   </tbody>
 </table>
 <h1>Add New Platform</h1>
-<form action="PLACEHOLDER" method="POST">
-  <label for="platform">Platform Name</label>
-  <input type="text" id="platform" name="platform" required>
-
+<form action="PLACEHOLDER" method="POST"class="GenreForm">
+  <div class="formGroup">
+    <div class="formTitle">
+      <label for="platform">Platform Name</label>
+      <input type="text" id="platform" name="platform" required>
+    </div>
+  </div>
   <button type="submit">Add Platform</button>
+</form>
+<h1>Update Platform</h1>
+<form action="PLACEHOLDER" method="POST" class="GenreForm" id="updateGenreForm">
+  <div class="formGroup">
+    <div class="formTitle">
+      <label for="platform">Platform Name</label>
+      <select id="platformSelect" name="platformID" required>
+        <option value="">Select a platform</option>
+        {{#each platforms}}
+          <option 
+            value="{{platformID}}" 
+            data-name="{{platform}}"
+            {{#if @first}}selected{{/if}}>{{platform}}</option>
+        {{/each}}
+      </select>
+    </div>
+    <span class="arrow">&rarr;</span>
+    <div class="formTitle">
+      <label for="newPlatform">New Platform Name</label>
+      <input type="text" id="newPlatform" name="platform" required>
+    </div>
+  </div>
+  <button type="submit">Update Platform</button>
 </form>

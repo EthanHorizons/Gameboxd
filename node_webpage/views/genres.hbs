@@ -14,10 +14,6 @@
       <td>{{genreID}}</td>
       <td>{{name}}</td>
       <td class="actions">
-        <form action="/edit-genre" method="GET" style="display:inline;">
-          <input type="hidden" name="genreID" value="{{genreID}}" />
-          <button type="submit">Edit</button>
-        </form>
         <form action="/delete-genre" method="POST" style="display:inline;">
           <input type="hidden" name="genreID" value="{{genreID}}" />
           <button type="submit">Delete</button>
@@ -30,10 +26,36 @@
 
 <h1>Add New Genre</h1>
 
-<form action="PLACEHOLDER" method="POST">
-  <label for="name">Genre Name</label>
-  <input type="text" id="name" name="name" required>
-
+<form action="PLACEHOLDER" method="POST" class="GenreForm" >
+  <div class="formGroup">
+    <div class="formTitle">
+      <label for="name">Genre Name</label>
+      <input type="text" id="name" name="name" required>
+    </div>
+  </div>
   <button type="submit">Add Genre</button>
+</form>
+<h1>Update Genre</h1>
+<form action="PLACEHOLDER" method="POST" class="GenreForm" id="updateGenreForm">
+  <div class="formGroup">
+    <div class="formTitle">
+      <label for="name">Genre Name</label>
+      <select id="gameSelect" name="gameID" required>
+      <option value="">Select a game</option>
+      {{#each genres}}
+        <option 
+          value="{{genreID}}" 
+          data-name="{{name}}"
+          {{#if @first}}selected{{/if}}>{{name}}</option>
+      {{/each}}
+      </select>
+    </div>
+    <span class="arrow">&rarr;</span>
+    <div class="formTitle">
+      <label for="name">New Genre Name</label>
+      <input type="text" id="name" name="name" required>
+    </div>
+  </div>
+  <button type="submit">Update Genre</button>
 </form>
 

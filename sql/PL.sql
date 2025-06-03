@@ -106,7 +106,7 @@ DELIMITER //
 CREATE PROCEDURE insertUser(
     IN inUsername VARCHAR(255),
     IN inPassword VARCHAR(255),
-    IN inEmail VARCHAR(255),
+    IN inEmail VARCHAR(255)
     )
     BEGIN
         INSERT INTO users (username, password, email, numGames)

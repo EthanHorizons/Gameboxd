@@ -65,8 +65,8 @@
   th, td {
     color: var(--text-color);
     border: 1px solid #ccc;
-    padding: 12px;
-    text-align: left;
+    padding: 6px;
+    text-align: center;
   }
 
   th {
@@ -164,6 +164,26 @@ form {
   border-radius: 8px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
+.UserForm {
+  margin: 0px auto;
+  width: 50vw;
+  background-color: var(--secondary-color);
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+.GenreForm {
+  margin: 0px auto;
+  width: 30vw;
+  background-color: var(--secondary-color);
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+#updateGenreForm {
+  width: 40vw;
+}
+
 button {
     background-color: var(--prime-color);
     color: var(--text-color);

@@ -18,11 +18,7 @@
       <td>{{email}}</td>
       <td>{{numGames}}</td>
       <td class="actions">
-        <form action="/edit-user" method="GET" style="display:inline;">
-          <input type="hidden" name="userID" value="{{userID}}" />
-          <button type="submit">Edit</button>
-        </form>
-        <form action="/delete-user" method="POST" style="display:inline;">
+        <form action="/delete-user" method="POST">
           <input type="hidden" name="userID" value="{{userID}}" />
           <button type="submit">Delete</button>
         </form>
@@ -33,29 +29,72 @@
 </table>
 
 <h1>Add User</h1>
-<form action="/add-user" method="POST">
-  <label for="username">Username</label>
-  <input type="text" id="username" name="username" required>
+<form action="/add-user" method="POST" class="UserForm">
+<div class="formGroup">
+  <div class="formTitle">
+    <label for="username">Username</label>
+    <input type="text" id="username" name="username" required>
+  </div>
 
-  <label for="email">Email</label>
-  <input type="email" id="email" name="email" required>
+  <div class="formTitle">
+    <label for="email">Email</label>
+    <input type="email" id="email" name="email" required>
+  </div>
 
-  <label for="numGames">Number of Games</label>
-  <input type="number" id="numGames" name="numGames" min="0" required>
+  <div class="formTitle">
+    <label for="numGames">Number of Games</label>
+    <input type="number" id="numGames" name="numGames" min="0" required>
+  </div>
+</div>
 
   <button type="submit">Add User</button>
 </form>
 
 <h1>Update User</h1>
-<form action="PLACEHOLDER" method="POST">
-  <label for="username">Username</label>
-  <input type="text" id="username" name="username" value="Alice Johnson" required>
+<form action="PLACEHOLDER" method="POST" class="UserForm">
+  <div class="formGroup">
+    <div class="formTitle">
+      <label for="username">Username</label>
+      <select id="userSelect" name="userID" required>
+      <option value="">Select a user</option>
+      {{#each users}}
+        <option 
+          value="{{userID}}" 
+          data-name="{{username}}" 
+          data-email="{{email}}"
+          data-numgames="{{numGames}}"
+          {{#if @first}}selected{{/if}}>{{username}}</option>
+      {{/each}}
+      </select>
+    </div>
 
-  <label for="email">Email</label>
-  <input type="email" id="email" name="email" value="coolio@example.com" required>
+    <div class="formTitle">
+      <label for="UPemail">Email</label>
+      <input type="email" id="UPemail" name="email" value="coolio@example.com" required>
+    </div>
 
-  <label for="numGames">Number of Games</label>
-  <input type="number" id="numGames" name="numGames" value="2" min="0" required>
-
+    <div class="formTitle">
+      <label for="UPnumGames">Number of Games</label>
+      <input type="number" id="UPnumGames" name="numGames" value="2" min="0" required>
+    </div>
+  </div>
   <button type="submit">Update User</button>
 </form>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  const userSelect = document.getElementById('userSelect');
+  const emailInput = document.getElementById('UPemail');
+  const numGamesInput = document.getElementById('UPnumGames');
+
+  userSelect.addEventListener('change', function() {
+    const selectedOption = userSelect.options[userSelect.selectedIndex];
+    if (!selectedOption.value) {
+      emailInput.value = '';
+      numGamesInput.value = '';
+      return;
+    }
+    emailInput.value = selectedOption.dataset.email;
+    numGamesInput.value = selectedOption.dataset.numgames;
+  });
+});
+</script>
