@@ -152,11 +152,11 @@ app.post('/add-game', async function (req, res) {
 });
 
 app.post('/add-user', async function (req, res) {
-    const { username, password, email } = req.body;
+    const { username, email } = req.body;
 
     try {
-        const sql = `CALL insertUser(?, ?, ?)`;
-        await db.query(sql,  [username, password, email])
+        const sql = `CALL insertUser(?, ?)`;
+        await db.query(sql,  [username, email])
         res.redirect('/users');
     } catch (err) {
         console.error("Failed to add user:", err);

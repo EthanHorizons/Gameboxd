@@ -1,3 +1,4 @@
+ USE cs340_ossanae;
    /* Citation for use of AI Tools:
     # Date: 05/29/25
     # Prompts used to generate PL/SQL:
@@ -85,7 +86,7 @@ DELIMITER ;
 
 /* INSERTS */
 
-DROP PROCEDURE IF EXISTS insertGame
+DROP PROCEDURE IF EXISTS insertGame;
 DELIMITER //
 CREATE PROCEDURE insertGame(
     IN inName VARCHAR(255),
@@ -101,61 +102,60 @@ END //
 
 DELIMITER ;
 
-DROP PROCEDURE IF EXISTS insertUser
+DROP PROCEDURE IF EXISTS insertUser;
 DELIMITER //
 CREATE PROCEDURE insertUser(
     IN inUsername VARCHAR(255),
-    IN inPassword VARCHAR(255),
-    IN inEmail VARCHAR(255),
-    )
-    BEGIN
-        INSERT INTO users (username, password, email, numGames)
-        VALUES (inUsername, inPassword, inEmail);
-END //
-
-DELIMITTER ;
-
-
-DROP PROCEDURE IF EXISTS insertPlatform
-DELIMITER //
-CREATE PROCEDURE insertPlatform(IN inPlatform)
-    BEGIN 
-        INSERT INTO platforms (platform)
-        VALUES (inPlatform);
+    IN inEmail VARCHAR(255)
+)
+BEGIN
+        INSERT INTO users (username, email)
+        VALUES (inUsername, inEmail);
 END //
 
 DELIMITER ;
 
 
-DROP PROCEDURE IF EXISTS insertGenre
+DROP PROCEDURE IF EXISTS insertPlatform;
 DELIMITER //
-CREATE PROCEDURE insertGenre(IN inName)
-    BEGIN 
-        INSERT INTO genres (name)
-        VALUES (name);
+CREATE PROCEDURE insertPlatform(IN inPlatform VARCHAR(255))
+BEGIN 
+    INSERT INTO platforms (platform)
+    VALUES (inPlatform);
 END //
 
-DELIMITTER ;
+DELIMITER ;
 
 
-DROP PROCEDURE IF EXISTS insertGameToLibrary
+DROP PROCEDURE IF EXISTS insertGenre;
+DELIMITER //
+CREATE PROCEDURE insertGenre(IN inName VARCHAR(255))
+BEGIN 
+    INSERT INTO genres (name)
+    VALUES (inName);
+END //
+
+DELIMITER ;
+
+
+DROP PROCEDURE IF EXISTS insertGameToLibrary;
 DELIMITER //
 CREATE PROCEDURE insertGameToLibrary(
-    IN inUserID INT
+    IN inUserID INT,
     IN inGameID INT)
 BEGIN
     INSERT INTO userLibrary (userID, gameID)
     VALUES (inUserID, inGameID);
 END //
 
-DELIMITTER ;
+DELIMITER ;
 
 
 
 
 /* UPDATES */
 
-DROP PROCEDURE IF EXISTS updateGame
+DROP PROCEDURE IF EXISTS updateGame;
 DELIMITER //
 
 CREATE PROCEDURE updateGame(
@@ -180,13 +180,13 @@ END //
 
 DELIMITER ;
 
-DROP PROCEDURE IF EXISTS updateUser
+DROP PROCEDURE IF EXISTS updateUser;
 DELIMITER //
 
 CREATE PROCEDURE updateUser(
     IN inUserID INT,
     IN inUsername VARCHAR(255),
-    IN inEmail VARCHAR(255),
+    IN inEmail VARCHAR(255)
     )
 BEGIN
         UPDATE users
@@ -205,9 +205,9 @@ DELIMITER ;
 DROP PROCEDURE IF EXISTS deleteGame;
 DELIMITER //
 
-CREATE PROCEDURE deleteGame(IN gameID INT)
+CREATE PROCEDURE deleteGame(IN inGameID INT)
 BEGIN
-    DELETE FROM games WHERE id = gameID;
+    DELETE FROM games WHERE gameID = inGameID;
 END //
 
 DELIMITER ;
@@ -241,7 +241,7 @@ DELIMITER //
 
 CREATE PROCEDURE deletePlatform(IN inPlatformID INT)
 BEGIN
-    DELETE FROM plaftorms WHERE platformID = inPlatformID;
+    DELETE FROM platforms WHERE platformID = inPlatformID;
 END //
 
 DELIMITER ;
@@ -278,15 +278,15 @@ DELIMITER ;
 
 -- trigger that will delete 1 from numGames of a user upon removing game from library
 DROP TRIGGER IF EXISTS decTotalRemovingGameFromLibrary;
-DELIMITTER //
+DELIMITER //
 CREATE TRIGGER decTotalRemovingGameFromLibrary
 AFTER DELETE ON userLibrary
 FOR EACH ROW
 BEGIN 
     UPDATE users
     set numGames = numGames - 1
-    WHERE userID = OLD.userID
+    WHERE userID = OLD.userID;
 END //
 
-DELIMITTER ;
+DELIMITER ;
 
