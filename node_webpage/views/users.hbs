@@ -73,10 +73,7 @@
       <input type="email" id="UPemail" name="email" value="coolio@example.com" required>
     </div>
 
-    <div class="formTitle">
-      <label for="UPnumGames">Number of Games</label>
-      <input type="number" id="UPnumGames" name="numGames" value="2" min="0" required>
-    </div>
+  
   </div>
   <button type="submit">Update User</button>
 </form>
@@ -84,17 +81,14 @@
 document.addEventListener('DOMContentLoaded', function() {
   const userSelect = document.getElementById('userSelect');
   const emailInput = document.getElementById('UPemail');
-  const numGamesInput = document.getElementById('UPnumGames');
 
   userSelect.addEventListener('change', function() {
     const selectedOption = userSelect.options[userSelect.selectedIndex];
     if (!selectedOption.value) {
       emailInput.value = '';
-      numGamesInput.value = '';
       return;
     }
     emailInput.value = selectedOption.dataset.email;
-    numGamesInput.value = selectedOption.dataset.numgames;
   });
 });
 </script>
