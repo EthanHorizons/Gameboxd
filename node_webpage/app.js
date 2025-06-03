@@ -134,7 +134,25 @@ app.post('/reset-db', async (req, res) => {
 });
 
 
-
+/* GET Routes for getting genres, platforms, and users */
+app.get('/get-platforms', async function (req, res) {
+    try {
+        const [platforms] = await db.query("SELECT platformID, platform FROM platforms ORDER BY platform;");
+        res.status(200).json(platforms);
+    } catch (error) {
+        console.error("Error fetching platforms", error);
+        res.status(500).send();
+    }
+});
+app.get('/get-genres', async function (req, res) {
+    try {
+        const [genres] = await db.query("SELECT genreID, name FROM genres ORDER BY name;");
+        res.status(200).json(genres);
+    } catch (error) {
+        console.error("Error fetching genres", error);
+        res.status(500).send();
+    }
+});
 
 /* POST/ADDS */
 
@@ -216,7 +234,7 @@ app.post('/add-game-library', async function (req, res) {
 app.post('/edit-game', async function (req, res) {
    try {
     const { gameID, name, genreID, platformID, numUsers, rating, description } = req.body;
-    const sql = `CALL updateGame(?, ?, ?, ?, ?, ?);`;
+    const sql = `CALL updateGame(?, ?, ?, ?, ?, ?, ?);`;
     await db.query(sql, [gameID, name, genreID, platformID, numUsers, rating, description]);
     res.redirect('/games');
    } catch (error) {
