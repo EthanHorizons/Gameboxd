@@ -17,9 +17,18 @@ DELIMITER //
 
 CREATE PROCEDURE getGames()
 BEGIN
-    SELECT * 
+    SELECT 
+        games.gameID,
+        games.name,
+        genres.name AS genre,
+        platforms.platform AS platform,
+        games.numUsers,
+        games.rating,
+        games.description
     FROM games
-    ORDER BY rating DESC;
+    INNER JOIN genres ON genres.genreID = games.genreID
+    INNER JOIN platforms ON platforms.platformID = games.platformID
+    ORDER BY games.rating DESC;
 END //
 
 DELIMITER ;
