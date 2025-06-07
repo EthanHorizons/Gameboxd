@@ -59,6 +59,36 @@ app.get('/games', async function (req, res) {
     } 
 }); 
 
+/* 
+Description: returns the table of games with optional filter as well. can sort by genre, platform,
+greater than {filter} rating or numUsers. 
+
+Parameters: (Optional)
+    filterString:
+        NULL- filter does not exist, returns all games
+        genres.name - filter for genre
+        platforms.platform - filter for platform
+        games.numUsers- filter for numUsers
+        games.rating- filter for rating
+        anything else- throw an error
+    filter:
+        if filterSting exists, cannot be NULL
+        the thing to be filtered through sliders/inputs
+        ex: filterString = genres.name, filter = 'rpg'
+*/
+app.get('/games-filter', async function (req, res) {
+    const filterString = req.query.filterString;
+    const filter = req.query.filter;
+    try {
+        const sql = 'CALL getFilteredGames(?, ?)';
+        const [rows] = await db.query(sql, [filterString, filter]);
+        res.render('games', {title: 'Games', games:rows[0]});
+    } catch (err) {
+        console.error('Error filtering games ', err)
+        res.status(500).send('Failed to filter games');
+    }
+});
+
 // This is the users page
 app.get('/users', async function (req, res) {
     try {
@@ -180,7 +210,7 @@ app.post('/add-platform', async function (req, res) {
     const { platform} = req.body;
 
     try {
-        const sql = `CALL insertPlatform(platform)`;
+        const sql = `CALL insertPlatform(?)`;
         await db.query(sql,  [platform])
         res.redirect('/platforms');
     } catch (err) {
@@ -202,16 +232,17 @@ app.post('/add-genre', async function (req, res) {
     }
 });
 
-// TODO: figure out how to create this add
-app.post('/add-game-library', async function (req, res) {
-    const { name } = req.body;
+// hopefully functional, just send game and user IDs
+app.post('/add-game-library/:id', async function (req, res) {
+    const { gameID } = req.body;
+    const userID = req.params.id;
 
     try {
-        const sql = `CALL insertGenre(?)`;
-        await db.query(sql, [name])
-        res.redirect('/genres');
+        const sql = `CALL insertGameToLibrary(?, ?)`;
+        await db.query(sql, [userID, gameID])
+        res.redirect(`/userLibrary/${userID}`);
     } catch (err) {
-        console.error("Failed to add genre:", err);
+        console.error("Failed to add game to user library:", err);
         res.status(500).send();
     }
 });
@@ -242,7 +273,7 @@ app.post('/edit-user', async function (req, res) {
     const { userID, username, email } = req.body;
     const sql = `CALL updateUser(?, ?, ?);`;
     await db.query(sql, [userID, username, email]);
-    res.redirect('/user');
+    res.redirect('/users');
    } catch (error) {
     console.error("Error editing user", error);
     res.status(500).send();
@@ -275,8 +306,15 @@ app.post('/edit-genre', async function (req, res) {
 // no Update user library needed, only add and delete
 
 
-// TODO CHANGE TO app.delete!!!!!!!!!!!!!!!!!!!!!
-// (keeping this here until a app.delete function is proven to be possible)
+
+
+
+
+
+/* DELETES */
+
+// NOTE PLEASE READ:
+/* I lied to you, delete is not compatible. stick to app.post */
 app.post('/delete-game', async (req, res) => {
   const gameID = req.body.gameID;
   try {
@@ -284,8 +322,11 @@ app.post('/delete-game', async (req, res) => {
     await db.query('DELETE FROM userLibrary WHERE gameID = ?', [gameID]);
 
     // Step 2: Delete from games
-    await db.query('DELETE FROM games WHERE gameID = ?', [gameID]);
+    const [result] = await db.query('DELETE FROM games WHERE gameID = ?', [gameID]);
 
+    if (result.affectedRows == 0) {
+        return res.status(404).send("could not properly delete game");
+    }
     res.redirect('/games');
   } catch (error) {
     console.error('Error deleting game:', error);
@@ -294,51 +335,42 @@ app.post('/delete-game', async (req, res) => {
 });
 
 
-
-
-/* DELETES */
-
-// NOTE PLEASE READ:
-/* To make this compatible with multiple browsers, I switched the 
-DELETE requests to take variables from querys instead of from
-req.body. Otherwise, the delete requests should work. Please let me 
-know if they aren't working / you need help implementing it */
-
-app.delete('/genre', async function (req, res) {
+app.post('/delete-genre', async function (req, res) {
     try {
-        const genreID = req.query.genreID;
+        const genreID = req.body.genreID;
         const [result] = await db.query(`DELETE FROM genres WHERE genreID = ?`, [genreID]);
         if (result.affectedRows == 0) {
-            res.status(404).send("Genre not found");
+            return res.status(404).send("Genre not found");
         }
-        res.status(204).send();
+        res.redirect('/genres');
     } catch(error) {
         console.error("Could not remove genre", error);
         res.status(500).send();
     }
 });
 
-app.delete('/platform', async function (req, res) {
+app.post('/delete-platform', async function (req, res) {
     try {
-        const platformID = req.query.platformID;
+        const platformID = req.body.platformID;
         const [result] = await db.query(`DELETE FROM platforms WHERE platformID = ? `, [platformID]);
         if (result.affectedRows == 0) {
-            res.status(404).send("Platform not found");
+            return res.status(404).send("Platform not found");
         }
-        res.status(204).send();
+        res.redirect('/platforms');
     } catch(error) {
         console.error("Could not remove platform", error);
         res.status(500).send();
     }
 });
 
-app.delete('/users', async function (req, res) {
+app.post('/delete-user', async function (req, res) {
     try {
-        const userID = req.query.userID;
+        const userID = req.body.userID;
         const [result] = await db.query(`DELETE FROM users WHERE userID = ? `, [userID]);
         if (result.affectedRows == 0) {
-            res.status(404).send("User not found");
+            return res.status(404).send("User not found");
         }
+        res.redirect('/users');
     } catch(error) {
         console.error("Could not remove user", error);
         res.status(500).send();
@@ -346,14 +378,15 @@ app.delete('/users', async function (req, res) {
 });
 
 // delete game from user library
-app.delete('/userLibrary/:userID', async function (req, res) {
+app.post('/delete-from-library/:userID', async function (req, res) {
     try {
-        const { gameID } = req.query.gameID;
+        const gameID = req.body.gameID;
         const userID = req.params.userID;
         const [result] = await db.query(`DELETE FROM userLibrary WHERE userID = ? AND gameID = ?`, [userID, gameID]);
         if (result.affectedRows == 0) {
-            res.status(404).send("Game not found in user library");
+            return res.status(404).send("Game not found in user library");
         }
+        res.redirect(`/userLibrary/${userID}`);
     } catch(error) {
         console.error("Could not remove game from userLibrary", error);
         res.status(500).send();

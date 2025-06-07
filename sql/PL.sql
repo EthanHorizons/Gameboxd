@@ -33,6 +33,74 @@ END //
 
 DELIMITER ;
 
+/*
+filterString:
+        NULL- filter does not exist, returns all games
+        genres.name - filter for genre
+        platforms.platform - filter for platform
+        games.numUsers- filter for numUsers
+        games.rating- filter for rating
+        anything else- throw an error
+    filter:
+        if filterSting exists, cannot be NULL
+        the thing to be filtered through sliders/inputs
+        ex: filterString = genres.name, filter = 'rpg'
+-- get filtered games
+
+*AI assisted in the creation of this procedure*
+*/
+DROP PROCEDURE IF EXISTS getFilteredGames()
+DELIMITER //
+
+CREATE PROCEDURE getFilteredGames(
+    IN filterString VARCHAR(255),
+    IN filterValue VARCHAR(255)
+)
+BEGIN 
+     SET @sql = '
+        SELECT 
+            games.gameID,
+            games.name,
+            genres.name AS genre,
+            platforms.platform AS platform,
+            games.numUsers,
+            games.rating,
+            games.description
+        FROM games
+        INNER JOIN genres ON genres.genreID = games.genreID
+        INNER JOIN platforms ON platforms.platformID = games.platformID';
+    
+    IF filterString IS NOT NULL THEN 
+        IF filterString = 'genres.name' THEN
+            SET @sql = CONCAT(@sql, ' WHERE genres.name = ?');
+        ELSEIF filterString = 'platforms.platform' THEN
+            SET @sql = CONCAT(@sql, ' WHERE platforms.platform = ?');
+        ELSEIF filterString = 'games.numUsers' THEN
+            SET @sql = CONCAT(@sql, ' WHERE games.numUsers >= ?');
+        ELSEIF filterString = 'games.rating' THEN
+            SET @sql = CONCAT(@sql, ' WHERE games.rating >= ?');
+        ELSE
+            SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Invalid filterString';
+        END IF;
+    END IF;
+
+    SET @sql = CONCAT(@sql, ' ORDER BY games.rating DESC');
+
+    IF filterString IS NOT NULL THEN
+        PREPARE stmt FROM @sql;
+        EXECUTE stmt USING filterValue;
+        DEALLOCATE PREPARE stmt;
+    ELSE
+        PREPARE stmt FROM @sql;
+        EXECUTE stmt;
+        DEALLOCATE PREPARE stmt;
+    END IF;
+END //
+
+DELIMITER ;
+
+
+
 -- get genres table
 DROP PROCEDURE IF EXISTS getGenres;
 DELIMITER //
@@ -196,7 +264,7 @@ CREATE PROCEDURE updateUser(
     IN inUserID INT,
     IN inUsername VARCHAR(255),
     IN inEmail VARCHAR(255)
-    )
+)
 BEGIN
         UPDATE users
         SET
@@ -213,7 +281,7 @@ DELIMITER //
 CREATE PROCEDURE updatePlatform(
     IN inPlatformID INT,
     IN inPlatform VARCHAR(255)
-    )
+)
 BEGIN
         UPDATE platforms
         SET
@@ -229,7 +297,7 @@ DELIMITER //
 CREATE PROCEDURE updateGenre(
     IN inGenreID INT,
     IN inName VARCHAR(255)
-    )
+)
 BEGIN
         UPDATE genres
         SET
