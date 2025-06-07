@@ -208,6 +208,41 @@ END //
 DELIMITER ;
 
 
+DROP PROCEDURE IF EXISTS updatePlatform;
+DELIMITER //
+CREATE PROCEDURE updatePlatform(
+    IN inPlatformID INT,
+    IN inPlatform VARCHAR(255)
+    )
+BEGIN
+        UPDATE platforms
+        SET
+            platform = COALESCE(inPlatform, platform)
+        WHERE platformID = inPlatformID;
+END //
+
+DELIMITER ;
+
+
+DROP PROCEDURE IF EXISTS updateGenre;
+DELIMITER //
+CREATE PROCEDURE updateGenre(
+    IN inGenreID INT,
+    IN inName VARCHAR(255)
+    )
+BEGIN
+        UPDATE genres
+        SET
+            name = COALESCE(inName, name)
+        WHERE genreID = inGenreID;
+END //
+
+DELIMITER ;
+
+
+
+
+
 /* DELETES */
 
 -- delete game by ID
@@ -242,6 +277,8 @@ BEGIN
 END //
 
 DELIMITER ;
+
+
 
 
 -- delete platform by ID

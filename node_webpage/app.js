@@ -17,13 +17,6 @@ const path = require('path');
 const app = express();               // We need to instantiate an express object to interact with the server in our code
 
 
-// basic sql table used in multiple .get requests
-const basic_table = `SELECT games.gameID, games.name AS name, genres.name AS genre, 
-                        platforms.platform AS platform, games.numUsers, 
-                        games.rating, games.description 
-                    FROM games 
-                    INNER JOIN genres ON genres.genreID = games.genreID 
-                    INNER JOIN platforms ON platforms.platformID = games.platformID\n`;
 const PORT = 53005;     // Set a port number
 
 // Database 
@@ -55,6 +48,7 @@ app.get('/', async function (req, res) {
 });
 
 //pages for each entity
+//this is the games page
 app.get('/games', async function (req, res) {
     try {
         const [rows] = await db.query("CALL getGames();");
@@ -65,7 +59,7 @@ app.get('/games', async function (req, res) {
     } 
 }); 
 
-// This is the games page
+// This is the users page
 app.get('/users', async function (req, res) {
     try {
         const [rows] = await db.query("CALL getUsers();");
@@ -76,7 +70,7 @@ app.get('/users', async function (req, res) {
     } 
 }); 
 
-// This is the users page
+// This is the genres page
 app.get('/genres', async function (req, res) {
     try {
         const [rows] = await db.query("CALL getGenres();");
@@ -87,7 +81,7 @@ app.get('/genres', async function (req, res) {
     } 
 }); 
 
-// This is the genres page
+// This is the platforms page
 app.get('/platforms', async function (req, res) {
     try {
         const [rows] = await db.query("CALL getPlatforms();");
@@ -98,7 +92,7 @@ app.get('/platforms', async function (req, res) {
     } 
 });
 
-// This is the platform page
+// This is the user Library page
 app.get('/userLibrary/:id', async function (req, res) {
     try {
         const [rows] = await db.query(`CALL getUserLibrary(?);`, [req.params.id]);
@@ -255,6 +249,32 @@ app.post('/edit-user', async function (req, res) {
    } 
 });
 
+app.post('/edit-platform', async function (req, res) {
+   try {
+    const { platformID, platform } = req.body;
+    const sql = `CALL updatePlatform(?, ?);`;
+    await db.query(sql, [platformID, platform]);
+    res.redirect('/platforms');
+   } catch (error) {
+    console.error("Error editing platform", error);
+    res.status(500).send();
+   } 
+});
+
+app.post('/edit-genre', async function (req, res) {
+   try {
+    const { genreID, name } = req.body;
+    const sql = `CALL updateGenre(?, ?);`;
+    await db.query(sql, [genreID, name]);
+    res.redirect('/genres');
+   } catch (error) {
+    console.error("Error editing genre", error);
+    res.status(500).send();
+   } 
+});
+// no Update user library needed, only add and delete
+
+
 // TODO CHANGE TO app.delete!!!!!!!!!!!!!!!!!!!!!
 // (keeping this here until a app.delete function is proven to be possible)
 app.post('/delete-game', async (req, res) => {
@@ -325,6 +345,7 @@ app.delete('/users', async function (req, res) {
     }
 });
 
+// delete game from user library
 app.delete('/userLibrary/:userID', async function (req, res) {
     try {
         const { gameID } = req.query.gameID;
