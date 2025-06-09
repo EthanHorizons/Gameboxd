@@ -125,8 +125,12 @@ app.get('/platforms', async function (req, res) {
 // This is the user Library page
 app.get('/userLibrary/:id', async function (req, res) {
     try {
+
+        const [users] = await db.query(`CALL getUsers();`);
+        const maxUserID = users[0].length;
+
         const [rows] = await db.query(`CALL getUserLibrary(?);`, [req.params.id]);
-        res.render('userLibrary', { title: 'User Library', library: rows[0], userID: req.params.id });
+        res.render('userLibrary', { title: 'User Library', library: rows[0], userID: req.params.id, maxUserID: maxUserID });
     } catch (err) {
         console.error('Error calling stored procedure:', err);
         res.status(500).send('Failed to fetch userLibrary');
@@ -174,6 +178,19 @@ app.get('/get-genres', async function (req, res) {
     } catch (error) {
         console.error("Error fetching genres", error);
         res.status(500).send();
+    }
+});
+app.get('/games-filter-json', async function (req, res) {
+    const filterString = req.query.filterString;
+    const filter = req.query.filter;
+    const inUserID = req.query.userID || null;
+    try {
+        const sql = 'CALL getFilteredGames(?, ?, ?)';
+        const [rows] = await db.query(sql, [filterString, filter, inUserID]);
+        res.status(200).json(rows[0]);
+    } catch (err) {
+        console.error('Error filtering games (JSON)', err);
+        res.status(500).send('Failed to filter games');
     }
 });
 
