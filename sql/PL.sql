@@ -92,7 +92,6 @@ BEGIN
         END IF;
     END IF;
 
-    -- Add exclusion of user's library games if inUserID is provided
     IF inUserID IS NOT NULL THEN
         IF @hasWhere THEN
             SET @sql = CONCAT(@sql, ' AND games.gameID NOT IN (SELECT gameID FROM userLibrary WHERE userID = ', inUserID, ')');
@@ -117,7 +116,32 @@ END //
 
 DELIMITER ;
 
+-- get games not in userLibrary, not filtered
+--AI assisted in the creation of this procedure
+DELIMITER //
 
+CREATE PROCEDURE getGamesNotInUserLibrary(
+    IN inUserID INT
+)
+BEGIN
+    SELECT 
+        g.gameID,
+        g.name,
+        gen.name AS genre,
+        plat.platform AS platform,
+        g.numUsers,
+        g.rating,
+        g.description
+    FROM games g
+    LEFT JOIN genres gen ON gen.genreID = g.genreID
+    LEFT JOIN platforms plat ON plat.platformID = g.platformID
+    WHERE g.gameID NOT IN (
+        SELECT gameID FROM userLibrary WHERE userID = inUserID
+    )
+    ORDER BY g.rating DESC;
+END //
+
+DELIMITER ;
 
 -- get genres table
 DROP PROCEDURE IF EXISTS getGenres;
@@ -171,8 +195,8 @@ BEGIN
     FROM userLibrary
     INNER JOIN games ON games.gameID = userLibrary.gameID
     INNER JOIN users ON users.userID = userLibrary.userID
-    INNER JOIN genres ON genres.genreID = games.genreID
-    INNER JOIN platforms ON platforms.platformID = games.platformID
+    LEFT JOIN genres ON genres.genreID = games.genreID
+    LEFT JOIN platforms ON platforms.platformID = games.platformID
     WHERE userLibrary.userID = inUserID
     ORDER BY games.name DESC;
 END //
