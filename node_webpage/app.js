@@ -303,7 +303,20 @@ app.post('/edit-genre', async function (req, res) {
     res.status(500).send();
    } 
 });
-// no Update user library needed, only add and delete
+
+app.post('/update-user-library:id', async function  (req, res) {
+    try {
+        const {oldGenreID, newGenreID} = req.body;
+        const userID = req.params.id;
+
+        const sql = `CALL updateUserLibraryGame(?, ?, ?)`;
+        await db.query(sql, [userID, oldGenreID, newGenreID]);
+        res.redirect(`/userLibrary:${userID}`);
+    } catch (error) {
+        console.error("Error editing user Library game ", error);
+        res.status(500).send();
+    }
+})
 
 
 
@@ -404,72 +417,4 @@ app.listen(PORT, function(){            // This is the basic syntax for what is 
     console.log('Express started on http://localhost:' + PORT + '; press Ctrl-C to terminate.')
 });
 
-
-
-// IGNORE
-/* 
-Description: returns the table of games with optional filter as well. can sort by genre, platform,
-greater than {filter} rating or numUsers. 
-
-Parameters: (Optional)
-    filterString:
-        NULL- filter does not exist, returns all games
-        genres.name - filter for genre
-        platforms.platform - filter for platform
-        games.numUsers- filter for numUsers
-        games.rating- filter for rating
-        anything else- throw an error
-    filter:
-        if filterSting exists, cannot be NULL
-        the thing to be filtered through sliders/inputs
-        ex: filterString = genres.name, filter = 'rpg'
-*/
-/*
-
-OLD CODE, WILL FIX TO MAKE FILTERING USING PL
-
-app.get('/dashboard', async function (req, res) {
-    try {
-        // filters as selected by user to sort the list of games
-        const {filterString, filter} = req.query;
-        let query1 = basic_table;
-
-        // if no filter provided
-        if (!filterString || !filter) {
-            // returns a table of all games
-            query1 += ` ORDER BY games.rating DESC;`;
-        } 
-        // if filter is sorting by genre or platform
-        else if (filterString == "genres.name" || filterString == "platforms.platform") {
-            // returns table with just one genre or just one platform
-            query1 += ` WHERE ${filterString} = ${filter}
-                        ORDER BY games.rating DESC;`;
-        } 
-        // if filter is sorting by number of users or rating of game
-        else if (filterString == "games.numUsers" || filterString == "games.rating") {
-            // returns table with every game > {filter} rating or numUsers
-            query1 += ` WHERE ${filterString} >= ${filter}
-                        ORDER BY games.name DESC;`;
-        } else {
-            throw new Error("Invalid filterString provided");
-        }
-
-        // sends query1 to fetch table
-        const games = await db.query(query1);
-
-        // if query unsucessful
-        if (!games || games.length === 0) {
-            res.status(404).send("No games found");
-        }
-
-        // sends game table
-        res.status(200).json(games);
-
-    } catch (error) {
-        console.error("Error fetching gamesin /dashboard", error);
-        res.status(500).send();
-    }
-    
-});
-*/
 
