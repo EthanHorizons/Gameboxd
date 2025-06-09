@@ -350,6 +350,23 @@ END //
 DELIMITER ;
 
 
+DROP PROCEDURE IF EXISTS updateUserLibraryGame;
+DELIMITER //
+CREATE PROCEDURE updateUserLibraryGame(
+    IN userID INT,
+    IN oldGameID INT,
+    IN newGameID INT
+)
+BEGIN
+        UPDATE userLibrary
+        SET gameID = newGameID
+        WHERE gameiD = oldGameID;
+        
+END //
+
+DELIMITER ;
+
+
 
 
 
