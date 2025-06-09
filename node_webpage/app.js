@@ -130,12 +130,25 @@ app.get('/platforms', async function (req, res) {
 // This is the user Library page
 app.get('/userLibrary/:id', async function (req, res) {
     try {
+        const requestedID = parseInt(req.params.id);
 
-        const [users] = await db.query(`CALL getUsers();`);
-        const maxUserID = users[0].length;
+        const [userRows] = await db.query('SELECT userID FROM users ORDER BY userID');
+        const validUserIDs = userRows.map(row => row.userID);
 
+        if (!validUserIDs.includes(requestedID)) {
+            // Redirect to first valid user if requested one doesn't exist
+            if (validUserIDs.length > 0) {
+                return res.redirect(`/userLibrary/${validUserIDs[0]}`);
+            } else {
+                return res.status(404).send('No users found.');
+            }
+        }
         const [rows] = await db.query(`CALL getUserLibrary(?);`, [req.params.id]);
-        res.render('userLibrary', { title: 'User Library', library: rows[0], userID: req.params.id, maxUserID: maxUserID });
+        res.render('userLibrary', { 
+            title: 'User Library', 
+            library: rows[0], 
+            userID: req.params.id, 
+            validUserIDs: JSON.stringify(validUserIDs) });
     } catch (err) {
         console.error('Error calling stored procedure:', err);
         res.status(500).send('Failed to fetch userLibrary');
@@ -185,24 +198,25 @@ app.get('/get-genres', async function (req, res) {
         res.status(500).send();
     }
 });
-app.get('/games-filter-json', async function (req, res) {
-    const filterString = req.query.filterString;
-    const filter = req.query.filter;
-    const inUserID = req.query.userID || null;
-    try {
-        const sql = 'CALL getFilteredGames(?, ?, ?)';
-        const [rows] = await db.query(sql, [filterString, filter, inUserID]);
-        res.status(200).json(rows[0]);
-    } catch (err) {
-        console.error('Error filtering games (JSON)', err);
-        res.status(500).send('Failed to filter games');
-    }
+// this is for dropdown in library page
+app.get('/games-not-in-user', async function (req, res) {
+  const inUserID = req.query.userID || null;
+  
+  try {
+    const sql = 'CALL getGamesNotInUserLibrary(?)';
+    const [rows] = await db.query(sql, [inUserID]);
+    
+    res.status(200).json(rows[0]);
+  } catch (err) {
+    console.error('Error getting games not in user library (JSON)', err);
+    res.status(500).send('Failed to get games');
+  }
 });
 
 /* POST/ADDS */
 
 app.post('/add-game', async function (req, res) {
-    const { name, genreID, platformID, numUsers, rating, description } = req.body;
+    let { name, genreID, platformID, numUsers, rating, description } = req.body;
     genreID = genreID === '' ? null : genreID;
     platformID = platformID === '' ? null : platformID;
     try {
@@ -326,19 +340,20 @@ app.post('/edit-genre', async function (req, res) {
    } 
 });
 
-app.post('/update-user-library:id', async function  (req, res) {
+app.post('/update-user-library/:id', async function (req, res) {
     try {
-        const {oldGenreID, newGenreID} = req.body;
+        const { oldGameID, UPgameID } = req.body;
         const userID = req.params.id;
 
         const sql = `CALL updateUserLibraryGame(?, ?, ?)`;
-        await db.query(sql, [userID, oldGenreID, newGenreID]);
-        res.redirect(`/userLibrary:${userID}`);
+        await db.query(sql, [userID, oldGameID, UPgameID]);
+
+        res.redirect(`/userLibrary/${userID}`);
     } catch (error) {
-        console.error("Error editing user Library game ", error);
-        res.status(500).send();
+        console.error("Error editing user library game", error);
+        res.status(500).send('Failed to update user library');
     }
-})
+});
 
 
 
@@ -354,7 +369,7 @@ app.post('/delete-game', async (req, res) => {
   const gameID = req.body.gameID;
   try {
     // Call the stored procedure instead of raw DELETEs
-    const [result] = await db.query('CALL deleteame(?)', [gameID]);
+    const [result] = await db.query('CALL deleteGame(?)', [gameID]);
 
     // Optionally check if the game was actually deleted
     // Since CALL doesn't return affectedRows, you might check this in your procedure or assume success
@@ -412,7 +427,6 @@ app.post('/delete-user', async function (req, res) {
 app.post('/delete-from-library', async function (req, res) {
     try {
         const { gameID, userID } = req.body;
-        console.log("Deleting game from user library:", gameID, userID);
         const [result] = await db.query(
             'DELETE FROM userLibrary WHERE userID = ? AND gameID = ?',
             [userID, gameID]

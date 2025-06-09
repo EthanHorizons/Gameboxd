@@ -32,8 +32,8 @@
     <tr>
       <td>{{ID}}</td>
       <td>{{name}}</td>
-      <td>{{genre}}</td>
-      <td>{{platform}}</td>
+      <td>{{#if genre}}{{genre}}{{else}}<em>None</em>{{/if}}</td>
+      <td>{{#if platform}}{{platform}}{{else}}<em>None</em>{{/if}}</td>
       <td>{{numUsers}}</td>
       <td>{{rating}}</td>
       <td>{{description}}</td>
@@ -48,7 +48,7 @@
     {{/each}}
   </tbody>
 </table>
-<h1>Update Game to Library</h1>
+<h1>Add Game to Library</h1>
 <form action="/add-game-library/{{userID}}" method="POST" class="GenreForm">
   <div class="formGroup">
     <div class="formTitle">
@@ -61,55 +61,98 @@
 
   <button type="submit">Add Game</button>
 </form>
+<h1>Update games</h1>
+<form action="/update-user-library/{{userID}}" method="POST" class="GenreForm" id="updateGameForm">
+  <div class="formGroup">
+    <div class="formTitle">
+      <label for="oldGameID">Game Name</label>
+      <select id="oldGameID" name="oldGameID" required>
+      <option value="">Select a game</option>
+      {{#each library}}
+        <option 
+          value="{{ID}}" 
+          data-name="{{name}}" 
+          data-numusers="{{numUsers}}"
+          data-rating="{{rating}}"
+          data-description="{{description}}"
+          {{#if @first}}selected{{/if}}>{{name}}</option>
+      {{/each}}
+      </select>
+    </div>
+    <span class="arrow">&rarr;</span>
+    <div class="formTitle">
+      <label for="UPgameID">New Game</label>
+      <select id="UPgameID" name="UPgameID" required>
+        <option value="">Select a game</option>
+      </select>
+    </div>
+  </div>
+
+  <button type="submit">Update Game</button>
+</form>
 
 
 
 <script>
   document.addEventListener('DOMContentLoaded', () => {
-    const filter = ''; // or 'genre', etc.
-    const filterString = ''; // e.g., filter by PlayStation
-    const userID = document.getElementById('userID').value;
-    console.log('Loading games with filter:', filter, 'and filterString:', filterString);
-    fetch(`/games-filter-json?filter=${encodeURIComponent(filter)}&filterString=${encodeURIComponent(filterString)}&userID=${encodeURIComponent(userID)}`)
-      .then(res => res.json())
-      .then(data => {
-        const gameSelect = document.getElementById('gameID');
-        gameSelect.innerHTML = '<option value="">Select a game</option>';
-        data.forEach(game => {
-          const option = document.createElement('option');
-          option.value = game.gameID;
-          option.textContent = game.name;
-          gameSelect.appendChild(option);
-        });
-      })
-      .catch(err => console.error('Failed to load filtered games', err));
-  });
+  const userID = document.getElementById('userID').value;
+  
+  fetch(`/games-not-in-user?userID=${encodeURIComponent(userID)}`)
+    .then(res => res.json())
+    .then(data => {
+      const gameSelect = document.getElementById('gameID');
+      gameSelect.innerHTML = '<option value="">Select a game</option>';
+      data.forEach(game => {
+        const option = document.createElement('option');
+        option.value = game.gameID;
+        option.textContent = game.name;
+        gameSelect.appendChild(option);
+      });
+    })
+    .catch(err => console.error('Failed to load games not in user library', err));
+});
+document.addEventListener('DOMContentLoaded', () => {
+  const userID = document.getElementById('userID').value;
+  
+  fetch(`/games-not-in-user?userID=${encodeURIComponent(userID)}`)
+    .then(res => res.json())
+    .then(data => {
+      const gameSelect = document.getElementById('UPgameID');
+      gameSelect.innerHTML = '<option value="">Select a game</option>';
+      data.forEach(game => {
+        const option = document.createElement('option');
+        option.value = game.gameID;
+        option.textContent = game.name;
+        gameSelect.appendChild(option);
+      });
+    })
+    .catch(err => console.error('Failed to load games not in user library', err));
+});
 
-  const MIN_ID = 1;
-  const MAX_ID = {{maxUserID}};
-
+  const validUserIDs = {{{validUserIDs}}};
   const form = document.getElementById('userNavForm');
   const userIDInput = document.getElementById('userID');
   const display = document.getElementById('userIDDisplay');
   const prevBtn = document.getElementById('prevBtn');
   const nextBtn = document.getElementById('nextBtn');
 
-  const addForm = document.getElementById('addGameForm');
-  const addUserIDInput = document.getElementById('addUserID');
+  let currentIndex = validUserIDs.indexOf(parseInt(userIDInput.value));
 
   function navigate(delta) {
-    let id = parseInt(userIDInput.value);
-    id += delta;
-    if (id < MIN_ID || id > MAX_ID) return;
+  const currentID = parseInt(userIDInput.value);
+  let currentIndex = validUserIDs.indexOf(currentID);
 
-    userIDInput.value = id;
-    display.textContent = `User ID: ${id}`;
-    form.action = `/userLibrary/${id}`;
+  if (currentIndex === -1) return;
 
+  const newIndex = currentIndex + delta;
+  if (newIndex < 0 || newIndex >= validUserIDs.length) return;
 
-
-    form.submit();
-  }
+  const newUserID = validUserIDs[newIndex];
+  userIDInput.value = newUserID;
+  display.textContent = `User ID: ${newUserID}`;
+  form.action = `/userLibrary/${newUserID}`;
+  form.submit();
+}
 
   prevBtn.addEventListener('click', () => navigate(-1));
   nextBtn.addEventListener('click', () => navigate(1));
