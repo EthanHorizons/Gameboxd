@@ -62,10 +62,26 @@
   <button type="submit">Add Game</button>
 </form>
 <h1>Update games</h1>
-<form action="/update-game-library/{{userID}}" method="POST" class="GenreForm">
+<form action="/update-user-library/{{userID}}" method="POST" class="GenreForm" id="updateGameForm">
   <div class="formGroup">
     <div class="formTitle">
-      <label for="UPgameID">Game</label>
+      <label for="oldGameID">Game Name</label>
+      <select id="oldGameID" name="oldGameID" required>
+      <option value="">Select a game</option>
+      {{#each library}}
+        <option 
+          value="{{ID}}" 
+          data-name="{{name}}" 
+          data-numusers="{{numUsers}}"
+          data-rating="{{rating}}"
+          data-description="{{description}}"
+          {{#if @first}}selected{{/if}}>{{name}}</option>
+      {{/each}}
+      </select>
+    </div>
+    <span class="arrow">&rarr;</span>
+    <div class="formTitle">
+      <label for="UPgameID">New Game</label>
       <select id="UPgameID" name="UPgameID" required>
         <option value="">Select a game</option>
       </select>
@@ -85,6 +101,23 @@
     .then(res => res.json())
     .then(data => {
       const gameSelect = document.getElementById('gameID');
+      gameSelect.innerHTML = '<option value="">Select a game</option>';
+      data.forEach(game => {
+        const option = document.createElement('option');
+        option.value = game.gameID;
+        option.textContent = game.name;
+        gameSelect.appendChild(option);
+      });
+    })
+    .catch(err => console.error('Failed to load games not in user library', err));
+});
+document.addEventListener('DOMContentLoaded', () => {
+  const userID = document.getElementById('userID').value;
+  
+  fetch(`/games-not-in-user?userID=${encodeURIComponent(userID)}`)
+    .then(res => res.json())
+    .then(data => {
+      const gameSelect = document.getElementById('UPgameID');
       gameSelect.innerHTML = '<option value="">Select a game</option>';
       data.forEach(game => {
         const option = document.createElement('option');

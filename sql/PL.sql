@@ -360,8 +360,8 @@ CREATE PROCEDURE updateUserLibraryGame(
 BEGIN
         UPDATE userLibrary
         SET gameID = newGameID
-        WHERE gameiD = oldGameID;
-        
+        WHERE gameID = oldGameID AND userID = userID;
+
 END //
 
 DELIMITER ;

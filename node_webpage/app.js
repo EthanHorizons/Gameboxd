@@ -335,19 +335,20 @@ app.post('/edit-genre', async function (req, res) {
    } 
 });
 
-app.post('/update-user-library:id', async function  (req, res) {
+app.post('/update-user-library/:id', async function (req, res) {
     try {
-        const {oldGenreID, newGenreID} = req.body;
+        const { oldGameID, UPgameID } = req.body;
         const userID = req.params.id;
 
         const sql = `CALL updateUserLibraryGame(?, ?, ?)`;
-        await db.query(sql, [userID, oldGenreID, newGenreID]);
-        res.redirect(`/userLibrary:${userID}`);
+        await db.query(sql, [userID, oldGameID, UPgameID]);
+
+        res.redirect(`/userLibrary/${userID}`);
     } catch (error) {
-        console.error("Error editing user Library game ", error);
-        res.status(500).send();
+        console.error("Error editing user library game", error);
+        res.status(500).send('Failed to update user library');
     }
-})
+});
 
 
 
