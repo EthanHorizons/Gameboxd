@@ -34,12 +34,13 @@
       <td>{{name}}</td>
       <td>{{genre}}</td>
       <td>{{platform}}</td>
-      <td>{{users}}</td>
+      <td>{{numUsers}}</td>
       <td>{{rating}}</td>
       <td>{{description}}</td>
       <td>
         <form action="/delete-from-library" method="POST">
           <input type="hidden" name="gameID" value="{{ID}}" />
+          <input type="hidden" name="userID" value="{{../userID}}" />
           <button type="submit">Delete from Library</button>
         </form>
       </td>
@@ -47,15 +48,13 @@
     {{/each}}
   </tbody>
 </table>
-<h1>Add Game to Library</h1>
-<form action="PLACEHOLDER" method="POST" class="GenreForm">
+<h1>Update Game to Library</h1>
+<form action="/add-game-library/{{userID}}" method="POST" class="GenreForm">
   <div class="formGroup">
     <div class="formTitle">
       <label for="gameID">Game</label>
       <select id="gameID" name="gameID" required>
-        <option value="2">Halo Infinite	</option>
-        <option value="4">Zelda: Breath of the Wild	</option>
-        <option value="5">Candy Crush Saga	</option>
+        <option value="">Select a game</option>
       </select>
     </div>
   </div>
@@ -66,8 +65,28 @@
 
 
 <script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const filter = ''; // or 'genre', etc.
+    const filterString = ''; // e.g., filter by PlayStation
+    const userID = document.getElementById('userID').value;
+    console.log('Loading games with filter:', filter, 'and filterString:', filterString);
+    fetch(`/games-filter-json?filter=${encodeURIComponent(filter)}&filterString=${encodeURIComponent(filterString)}&userID=${encodeURIComponent(userID)}`)
+      .then(res => res.json())
+      .then(data => {
+        const gameSelect = document.getElementById('gameID');
+        gameSelect.innerHTML = '<option value="">Select a game</option>';
+        data.forEach(game => {
+          const option = document.createElement('option');
+          option.value = game.gameID;
+          option.textContent = game.name;
+          gameSelect.appendChild(option);
+        });
+      })
+      .catch(err => console.error('Failed to load filtered games', err));
+  });
+
   const MIN_ID = 1;
-  const MAX_ID = 5;
+  const MAX_ID = {{maxUserID}};
 
   const form = document.getElementById('userNavForm');
   const userIDInput = document.getElementById('userID');

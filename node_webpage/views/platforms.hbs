@@ -23,7 +23,7 @@
   </tbody>
 </table>
 <h1>Add New Platform</h1>
-<form action="PLACEHOLDER" method="POST"class="GenreForm">
+<form action="/add-platform" method="POST" class="GenreForm">
   <div class="formGroup">
     <div class="formTitle">
       <label for="platform">Platform Name</label>
@@ -33,7 +33,7 @@
   <button type="submit">Add Platform</button>
 </form>
 <h1>Update Platform</h1>
-<form action="PLACEHOLDER" method="POST" class="GenreForm" id="updateGenreForm">
+<form action="/edit-platform" method="POST" class="GenreForm" id="updateGenreForm">
   <div class="formGroup">
     <div class="formTitle">
       <label for="platform">Platform Name</label>
@@ -55,3 +55,19 @@
   </div>
   <button type="submit">Update Platform</button>
 </form>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  const platformSelect = document.getElementById('platformSelect');
+  const newPlatformInput = document.getElementById('newPlatform');
+
+  platformSelect.addEventListener('change', function() {
+    const selectedOption = platformSelect.options[platformSelect.selectedIndex];
+    if (!selectedOption.value) {
+      newPlatformInput.value = '';
+      return;
+    }
+
+    newPlatformInput.value = selectedOption.dataset.name;
+  });
+});
+</script>

@@ -26,8 +26,8 @@ BEGIN
         games.rating,
         games.description
     FROM games
-    INNER JOIN genres ON genres.genreID = games.genreID
-    INNER JOIN platforms ON platforms.platformID = games.platformID
+    LEFT JOIN genres ON genres.genreID = games.genreID
+    LEFT JOIN platforms ON platforms.platformID = games.platformID
     ORDER BY games.rating DESC;
 END //
 
@@ -54,10 +54,11 @@ DELIMITER //
 
 CREATE PROCEDURE getFilteredGames(
     IN filterString VARCHAR(255),
-    IN filterValue VARCHAR(255)
+    IN filterValue VARCHAR(255),
+    IN inUserID INT
 )
 BEGIN 
-     SET @sql = '
+    SET @sql = '
         SELECT 
             games.gameID,
             games.name,
@@ -69,24 +70,41 @@ BEGIN
         FROM games
         INNER JOIN genres ON genres.genreID = games.genreID
         INNER JOIN platforms ON platforms.platformID = games.platformID';
-    
-    IF filterString IS NOT NULL THEN 
+
+    -- Variable to track if WHERE clause exists
+    SET @hasWhere = FALSE;
+
+    IF filterString IS NOT NULL AND filterString != '' THEN 
         IF filterString = 'genres.name' THEN
             SET @sql = CONCAT(@sql, ' WHERE genres.name = ?');
+            SET @hasWhere = TRUE;
         ELSEIF filterString = 'platforms.platform' THEN
             SET @sql = CONCAT(@sql, ' WHERE platforms.platform = ?');
+            SET @hasWhere = TRUE;
         ELSEIF filterString = 'games.numUsers' THEN
             SET @sql = CONCAT(@sql, ' WHERE games.numUsers >= ?');
+            SET @hasWhere = TRUE;
         ELSEIF filterString = 'games.rating' THEN
             SET @sql = CONCAT(@sql, ' WHERE games.rating >= ?');
+            SET @hasWhere = TRUE;
         ELSE
             SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Invalid filterString';
         END IF;
     END IF;
 
+    -- Add exclusion of user's library games if inUserID is provided
+    IF inUserID IS NOT NULL THEN
+        IF @hasWhere THEN
+            SET @sql = CONCAT(@sql, ' AND games.gameID NOT IN (SELECT gameID FROM userLibrary WHERE userID = ', inUserID, ')');
+        ELSE
+            SET @sql = CONCAT(@sql, ' WHERE games.gameID NOT IN (SELECT gameID FROM userLibrary WHERE userID = ', inUserID, ')');
+            SET @hasWhere = TRUE;
+        END IF;
+    END IF;
+
     SET @sql = CONCAT(@sql, ' ORDER BY games.rating DESC');
 
-    IF filterString IS NOT NULL THEN
+    IF filterString IS NOT NULL AND filterString != '' THEN
         PREPARE stmt FROM @sql;
         EXECUTE stmt USING filterValue;
         DEALLOCATE PREPARE stmt;
@@ -336,6 +354,7 @@ DELIMITER //
 
 CREATE PROCEDURE deleteGame(IN inGameID INT)
 BEGIN
+    DELETE FROM userLibrary WHERE gameID = inGameID;
     DELETE FROM games WHERE gameID = inGameID;
 END //
 
@@ -347,6 +366,8 @@ DELIMITER //
 
 CREATE PROCEDURE deleteUser(IN inUserID INT)
 BEGIN
+    DELETE FROM userLibrary WHERE userID = inUserID;
+    -- delete user from userLibrary first to maintain referential integrity
     DELETE FROM users WHERE userID = inUserID;
 END //
 

@@ -26,7 +26,7 @@
 
 <h1>Add New Genre</h1>
 
-<form action="PLACEHOLDER" method="POST" class="GenreForm" >
+<form action="/add-genre" method="POST" class="GenreForm" >
   <div class="formGroup">
     <div class="formTitle">
       <label for="name">Genre Name</label>
@@ -36,12 +36,12 @@
   <button type="submit">Add Genre</button>
 </form>
 <h1>Update Genre</h1>
-<form action="PLACEHOLDER" method="POST" class="GenreForm" id="updateGenreForm">
+<form action="/edit-genre" method="POST" class="GenreForm" id="updateGenreForm">
   <div class="formGroup">
     <div class="formTitle">
       <label for="name">Genre Name</label>
-      <select id="gameSelect" name="gameID" required>
-      <option value="">Select a game</option>
+      <select id="genreSelect" name="genreID" required>
+      <option value="">Select a genre</option>
       {{#each genres}}
         <option 
           value="{{genreID}}" 
@@ -52,10 +52,26 @@
     </div>
     <span class="arrow">&rarr;</span>
     <div class="formTitle">
-      <label for="name">New Genre Name</label>
-      <input type="text" id="name" name="name" required>
+      <label for="UPname">New Genre Name</label>
+      <input type="text" id="UPname" name="name" required>
     </div>
   </div>
   <button type="submit">Update Genre</button>
 </form>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  const genreSelect = document.getElementById('genreSelect');
+  const genreNameInput = document.getElementById('UPname');
+
+  genreSelect.addEventListener('change', function() {
+    const selectedOption = genreSelect.options[genreSelect.selectedIndex];
+    if (!selectedOption.value) {
+      genreNameInput.value = '';
+      return;
+    }
+
+    genreNameInput.value = selectedOption.dataset.name;
+  });
+});
+</script>
 
