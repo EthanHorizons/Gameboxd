@@ -6,7 +6,12 @@
 // TO START:    npm run prod
 // TO STOP:     npm run stop
 
-
+/* Citation for use of AI Tools:
+    # Date: 05/29/25
+    # Prompts used to help check for errors/modify variable names
+    # Helped to modify repeated functions and fix errors
+    # AI Source URL: https://copilot.microsoft.com/
+*/
 
 
 // Express
