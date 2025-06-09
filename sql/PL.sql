@@ -26,8 +26,8 @@ BEGIN
         games.rating,
         games.description
     FROM games
-    INNER JOIN genres ON genres.genreID = games.genreID
-    INNER JOIN platforms ON platforms.platformID = games.platformID
+    LEFT JOIN genres ON genres.genreID = games.genreID
+    LEFT JOIN platforms ON platforms.platformID = games.platformID
     ORDER BY games.rating DESC;
 END //
 
@@ -319,6 +319,7 @@ DELIMITER //
 
 CREATE PROCEDURE deleteGame(IN inGameID INT)
 BEGIN
+    DELETE FROM userLibrary WHERE gameID = inGameID;
     DELETE FROM games WHERE gameID = inGameID;
 END //
 
@@ -330,6 +331,8 @@ DELIMITER //
 
 CREATE PROCEDURE deleteUser(IN inUserID INT)
 BEGIN
+    DELETE FROM userLibrary WHERE userID = inUserID;
+    -- delete user from userLibrary first to maintain referential integrity
     DELETE FROM users WHERE userID = inUserID;
 END //
 

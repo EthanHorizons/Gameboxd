@@ -40,6 +40,7 @@
       <td>
         <form action="/delete-from-library" method="POST">
           <input type="hidden" name="gameID" value="{{ID}}" />
+          <input type="hidden" name="userID" value="{{../userID}}" />
           <button type="submit">Delete from Library</button>
         </form>
       </td>
@@ -48,7 +49,7 @@
   </tbody>
 </table>
 <h1>Add Game to Library</h1>
-<form action="PLACEHOLDER" method="POST" class="GenreForm">
+<form action="/add-game-library/{{userID}}" method="POST" class="GenreForm">
   <div class="formGroup">
     <div class="formTitle">
       <label for="gameID">Game</label>

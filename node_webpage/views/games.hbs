@@ -18,8 +18,8 @@
     <tr>
       <td>{{gameID}}</td>
       <td>{{name}}</td>
-      <td>{{genre}}</td>
-      <td>{{platform}}</td>
+      <td>{{#if genre}}{{genre}}{{else}}<em>None</em>{{/if}}</td>
+      <td>{{#if platform}}{{platform}}{{else}}<em>None</em>{{/if}}</td>
       <td>{{numUsers}}</td>
       <td>{{rating}}</td>
       <td>{{description}}</td>
@@ -45,7 +45,9 @@
     </div>
     <div class="formTitle">
       <label for="addGenreID">Genre ID</label>
-      <select id="addGenreID" name="genreID" required></select>
+      <select id="addGenreID" name="genreID">
+        <option value="">No Genre</option>
+      </select>
     </div>
 
     <div class="formTitle">

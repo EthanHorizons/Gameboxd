@@ -33,14 +33,14 @@ BEGIN
     CREATE TABLE games (
         gameID int(11) NOT NULL AUTO_INCREMENT,
         name varchar(255) NOT NULL,
-        genreID int(11) NOT NULL,
-        platformID int(11) NOT NULL,
+        genreID int(11) NULL,
+        platformID int(11) NULL,
         numUsers int(11),
         rating int(11),
         description varchar(255),
         PRIMARY KEY (gameID),
-        FOREIGN KEY (genreID) REFERENCES genres(genreID),
-        FOREIGN KEY (platformID) REFERENCES platforms(platformID)
+        FOREIGN KEY (genreID) REFERENCES genres(genreID) ON DELETE SET NULL,
+        FOREIGN KEY (platformID) REFERENCES platforms(platformID) ON DELETE SET NULL
     );
 
     CREATE TABLE userLibrary (

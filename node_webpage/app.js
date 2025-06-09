@@ -126,7 +126,6 @@ app.get('/platforms', async function (req, res) {
 app.get('/userLibrary/:id', async function (req, res) {
     try {
         const [rows] = await db.query(`CALL getUserLibrary(?);`, [req.params.id]);
-        console.log(rows[0]);
         res.render('userLibrary', { title: 'User Library', library: rows[0], userID: req.params.id });
     } catch (err) {
         console.error('Error calling stored procedure:', err);
@@ -182,7 +181,8 @@ app.get('/get-genres', async function (req, res) {
 
 app.post('/add-game', async function (req, res) {
     const { name, genreID, platformID, numUsers, rating, description } = req.body;
-
+    genreID = genreID === '' ? null : genreID;
+    platformID = platformID === '' ? null : platformID;
     try {
         const sql = `CALL insertGame(?, ?, ?, ?, ?, ?)`;
         await db.query(sql, [name, genreID, platformID, numUsers, rating, description])
@@ -318,18 +318,14 @@ app.post('/edit-genre', async function (req, res) {
 app.post('/delete-game', async (req, res) => {
   const gameID = req.body.gameID;
   try {
-    // Step 1: Delete from userLibrary
-    await db.query('DELETE FROM userLibrary WHERE gameID = ?', [gameID]);
+    // Call the stored procedure instead of raw DELETEs
+    const [result] = await db.query('CALL deleteame(?)', [gameID]);
 
-    // Step 2: Delete from games
-    const [result] = await db.query('DELETE FROM games WHERE gameID = ?', [gameID]);
-
-    if (result.affectedRows == 0) {
-        return res.status(404).send("could not properly delete game");
-    }
+    // Optionally check if the game was actually deleted
+    // Since CALL doesn't return affectedRows, you might check this in your procedure or assume success
     res.redirect('/games');
   } catch (error) {
-    console.error('Error deleting game:', error);
+    console.error('Error calling delete_game procedure:', error);
     res.status(500).send('Error deleting game');
   }
 });
@@ -366,28 +362,31 @@ app.post('/delete-platform', async function (req, res) {
 app.post('/delete-user', async function (req, res) {
     try {
         const userID = req.body.userID;
-        const [result] = await db.query(`DELETE FROM users WHERE userID = ? `, [userID]);
-        if (result.affectedRows == 0) {
-            return res.status(404).send("User not found");
-        }
+
+        // Call the stored procedure instead of direct delete
+        await db.query('CALL deleteUser(?)', [userID]);
+
         res.redirect('/users');
-    } catch(error) {
+    } catch (error) {
         console.error("Could not remove user", error);
-        res.status(500).send();
+        res.status(500).send("Error deleting user");
     }
 });
 
 // delete game from user library
-app.post('/delete-from-library/:userID', async function (req, res) {
+app.post('/delete-from-library', async function (req, res) {
     try {
-        const gameID = req.body.gameID;
-        const userID = req.params.userID;
-        const [result] = await db.query(`DELETE FROM userLibrary WHERE userID = ? AND gameID = ?`, [userID, gameID]);
-        if (result.affectedRows == 0) {
+        const { gameID, userID } = req.body;
+        console.log("Deleting game from user library:", gameID, userID);
+        const [result] = await db.query(
+            'DELETE FROM userLibrary WHERE userID = ? AND gameID = ?',
+            [userID, gameID]
+        );
+        if (result.affectedRows === 0) {
             return res.status(404).send("Game not found in user library");
         }
         res.redirect(`/userLibrary/${userID}`);
-    } catch(error) {
+    } catch (error) {
         console.error("Could not remove game from userLibrary", error);
         res.status(500).send();
     }

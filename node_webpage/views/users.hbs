@@ -47,7 +47,7 @@
 </form>
 
 <h1>Update User</h1>
-<form action="PLACEHOLDER" method="POST" class="UserForm">
+<form action="/edit-user" method="POST" class="UserForm">
   <div class="formGroup">
     <div class="formTitle">
       <label for="username">Username</label>
@@ -58,10 +58,14 @@
           value="{{userID}}" 
           data-name="{{username}}" 
           data-email="{{email}}"
-          data-numgames="{{numGames}}"
           {{#if @first}}selected{{/if}}>{{username}}</option>
       {{/each}}
       </select>
+    </div>
+    <span class="arrow">&rarr;</span>
+    <div class="formTitle">
+      <label for="userName">New Username</label>
+      <input type="text" id="userName" name="username" required />
     </div>
 
     <div class="formTitle">
@@ -76,15 +80,19 @@
 <script>
 document.addEventListener('DOMContentLoaded', function() {
   const userSelect = document.getElementById('userSelect');
+  const userNameInput = document.getElementById('userName');
   const emailInput = document.getElementById('UPemail');
 
   userSelect.addEventListener('change', function() {
     const selectedOption = userSelect.options[userSelect.selectedIndex];
     if (!selectedOption.value) {
       emailInput.value = '';
+      userNameInput.value = '';
       return;
     }
+
     emailInput.value = selectedOption.dataset.email;
+    userNameInput.value = selectedOption.dataset.name;
   });
 });
 </script>
