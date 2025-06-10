@@ -8,17 +8,21 @@ Code should include citations that clearly credit non-original work BOTH in a RE
      Prompts used to help check for errors/modify variable names
      Helped to modify repeated functions and fix errors
      AI Source URL: https://copilot.microsoft.com/
+     
      ## Date: 05/29/25 (PL.sql)
      Prompts used to generate PL/SQL:
      Helped to modify multiple procedures after copy pasting for different pages, preforming basic tedious work
      AI Source URL: https://copilot.microsoft.com/
+     
      ## Date: 06/4/25 (userLibrary.hbs)
      Prompts used to help keep library live, 
      Helped grab live inputs, calling procs to get games not in user library, live dropdowns, nav between pages
      AI Source URL: https://copilot.microsoft.com/
+     
      ## Date: 06/4/25 (reset.hbs)
      Prompts used to help make calls to reset route
      AI Source URL: https://copilot.microsoft.com/
+     
      ## Date: 06/4/25 (games.hbs)
      Prompts used to help write dropdown functionality and form handling
      Helped to structure the table dynamically, so inputs are not hardcoded
